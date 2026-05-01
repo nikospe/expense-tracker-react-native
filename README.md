@@ -26,7 +26,13 @@ A professional, privacy-focused financial management mobile application designed
 
 | Monthly Dashboard | Expense Entry | Settings & Tax Config |
 |---|---|---|
-| ![Dashboard](https://via.placeholder.com/200x400?text=Dashboard) | ![Entries](https://via.placeholder.com/200x400?text=Entries) | ![Settings](https://via.placeholder.com/200x400?text=Settings) |
+| ![Dashboard] <img width="603" height="1311" alt="IMG_0820" src="https://github.com/user-attachments/assets/255db47f-ca28-4b07-94a1-a6fc25922257" />
+<img width="603" height="1311" alt="IMG_0821" src="https://github.com/user-attachments/assets/daad6512-329b-4610-8515-bfbdc4421b2b" />
+ | ![Entries] <img width="603" height="1311" alt="IMG_0817" src="https://github.com/user-attachments/assets/5ff24ef0-034e-4a17-9886-476ba476cf8b" />
+| ![Settings] <img width="603" height="1311" alt="IMG_0818" src="https://github.com/user-attachments/assets/226f582a-037f-40f4-8c59-ee35f4f791f4" />
+ <img width="603" height="1311" alt="IMG_0819" src="https://github.com/user-attachments/assets/01aa3c63-7fdc-419f-8338-083e52d0d728" />
+| ![Explore] <img width="603" height="1311" alt="IMG_0822" src="https://github.com/user-attachments/assets/0295053b-4cd7-4db6-99d0-5d366bf992f9" />
+
 
 > **Note:** Replace the placeholder images above with your actual app screenshots to showcase the UI.
 
