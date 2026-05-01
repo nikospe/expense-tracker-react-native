@@ -1,98 +1,298 @@
-import { Image } from 'expo-image';
-import { Platform, StyleSheet } from 'react-native';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { View, Text, ScrollView, StyleSheet, ActivityIndicator, Pressable } from 'react-native';
+import { useTranslation } from 'react-i18next';
+import { useRouter } from 'expo-router';
+import { GestureDetector, Gesture } from 'react-native-gesture-handler';
+import { runOnJS } from 'react-native-reanimated';
+import { SymbolView } from 'expo-symbols';
+import { SummaryCard } from '@/components/SummaryCard';
+import { MonthNavigator } from '@/components/MonthNavigator';
+import { ExpenseBreakdown } from '@/components/ExpenseBreakdown';
+import { IncomeList, ExpenseList, ProfitDistributionList } from '@/components/EntryList';
+import { useMonthData } from '@/hooks/use-month-data';
+import { getStandardIncomes, getStandardExpenses, forceApplyStandardsToMonth } from '@/lib/database';
+import { formatEuro, TAX_RATE } from '@/lib/calculations';
+import { useAppColors, useAppSettings } from '@/contexts/AppSettingsContext';
+import type { AppColors } from '@/lib/theme-colors';
 
-import { HelloWave } from '@/components/hello-wave';
-import ParallaxScrollView from '@/components/parallax-scroll-view';
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
-import { Link } from 'expo-router';
+const MIN_YEAR = 2020;
+const MIN_MONTH = 1;
 
-export default function HomeScreen() {
+function prevMonth(year: number, month: number) {
+  return month === 1 ? { year: year - 1, month: 12 } : { year, month: month - 1 };
+}
+function nextMonth(year: number, month: number) {
+  return month === 12 ? { year: year + 1, month: 1 } : { year, month: month + 1 };
+}
+
+export default function DashboardScreen() {
+  const { t } = useTranslation();
+  const colors = useAppColors();
+  const styles = useStyles(colors);
+  const { effectivePrepaymentRate, prepaymentEnabled, prepaymentRate, taxRate } = useAppSettings();
+  const router = useRouter();
+
+  const now = new Date();
+  const [year, setYear] = useState(now.getFullYear());
+  const [month, setMonth] = useState(now.getMonth() + 1);
+
+  // null = not checked, true/false = result
+  const [hasEnabledStandards, setHasEnabledStandards] = useState<boolean | null>(null);
+
+  const isCurrentMonth = year === now.getFullYear() && month === now.getMonth() + 1;
+
+  const handlePrev = useCallback(() => {
+    if (year === MIN_YEAR && month === MIN_MONTH) return;
+    const p = prevMonth(year, month);
+    setYear(p.year);
+    setMonth(p.month);
+  }, [year, month]);
+
+  const handleNext = useCallback(() => {
+    if (isCurrentMonth) return;
+    const n = nextMonth(year, month);
+    setYear(n.year);
+    setMonth(n.month);
+  }, [year, month, isCurrentMonth]);
+
+  // Horizontal swipe to change month (left = next, right = prev)
+  const swipeGesture = Gesture.Pan()
+    .activeOffsetX([-40, 40])
+    .failOffsetY([-15, 15])
+    .onEnd((e) => {
+      if (e.translationX < -60) {
+        runOnJS(handleNext)();
+      } else if (e.translationX > 60) {
+        runOnJS(handlePrev)();
+      }
+    });
+
+  const { incomes, expenses, profitDistributions, summary, loading, refresh } = useMonthData(
+    year, month, effectivePrepaymentRate, taxRate / 100,
+  );
+
+  const isEmpty = !loading && incomes.length === 0 && expenses.length === 0 && profitDistributions.length === 0;
+
+  // When landing on an empty past month, check if standards are configured
+  useEffect(() => {
+    if (!isCurrentMonth && isEmpty) {
+      Promise.all([getStandardIncomes(), getStandardExpenses()]).then(([si, se]) => {
+        setHasEnabledStandards([...si, ...se].some((item) => item.enabled === 1));
+      });
+    } else {
+      setHasEnabledStandards(null);
+    }
+  }, [isCurrentMonth, isEmpty]);
+
+  const handleFillWithDefaults = useCallback(async () => {
+    await forceApplyStandardsToMonth(year, month);
+    refresh();
+  }, [year, month, refresh]);
+
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
+    <GestureDetector gesture={swipeGesture}>
+      <ScrollView style={styles.scroll} contentContainerStyle={styles.container}>
+        <MonthNavigator
+          year={year} month={month}
+          onPrev={handlePrev}
+          onNext={handleNext}
         />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({
-              ios: 'cmd + d',
-              android: 'cmd + m',
-              web: 'F12',
-            })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <Link href="/modal">
-          <Link.Trigger>
-            <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-          </Link.Trigger>
-          <Link.Preview />
-          <Link.Menu>
-            <Link.MenuAction title="Action" icon="cube" onPress={() => alert('Action pressed')} />
-            <Link.MenuAction
-              title="Share"
-              icon="square.and.arrow.up"
-              onPress={() => alert('Share pressed')}
-            />
-            <Link.Menu title="More" icon="ellipsis">
-              <Link.MenuAction
-                title="Delete"
-                icon="trash"
-                destructive
-                onPress={() => alert('Delete pressed')}
-              />
-            </Link.Menu>
-          </Link.Menu>
-        </Link>
 
-        <ThemedText>
-          {`Tap the Explore tab to learn more about what's included in this starter app.`}
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          {`When you're ready, run `}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
+        {loading ? (
+          <ActivityIndicator style={styles.loader} color="#22c55e" />
+        ) : (
+          <>
+            <View style={styles.section}>
+              <SummaryCard
+                label={t('dashboard.totalIncome')}
+                amount={summary.totalIncome}
+                color="#22c55e"
+              />
+              <SummaryCard
+                label={t('dashboard.totalExpenses')}
+                amount={summary.totalExpenses}
+                color="#ef4444"
+              />
+              <SummaryCard
+                label={t('dashboard.grossProfit')}
+                amount={summary.grossProfit}
+                color={summary.grossProfit >= 0 ? '#f59e0b' : '#ef4444'}
+                subtitle={t('dashboard.beforeTax')}
+              />
+              <SummaryCard
+                label={t('dashboard.tax', { rate: (TAX_RATE * 100).toFixed(0) })}
+                amount={summary.tax}
+                color="#f59e0b"
+                subtitle={
+                  summary.grossProfit > 0
+                    ? t('dashboard.onGrossProfit', { amount: formatEuro(summary.grossProfit) })
+                    : t('dashboard.noTaxableProfit')
+                }
+              />
+              {prepaymentEnabled && summary.prepayment > 0 && (
+                <SummaryCard
+                  label={t('dashboard.prepayment', {
+                    rate: (prepaymentRate * 100).toFixed(0),
+                  })}
+                  amount={summary.prepayment}
+                  color="#a855f7"
+                  subtitle={formatEuro(summary.tax) + ' × ' + (prepaymentRate * 100).toFixed(0) + '%'}
+                />
+              )}
+              <SummaryCard
+                label={t('dashboard.netProfit')}
+                amount={summary.netProfit}
+                color={summary.netProfit >= 0 ? '#3b82f6' : '#ef4444'}
+                subtitle={t('dashboard.afterTaxAndExpenses')}
+                large
+              />
+            </View>
+
+            {/* Empty past month prompt */}
+            {!isCurrentMonth && isEmpty && hasEnabledStandards !== null && (
+              <EmptyMonthCard
+                hasStandards={hasEnabledStandards}
+                onFill={handleFillWithDefaults}
+                onGoToSettings={() => router.navigate('/(tabs)/settings')}
+                colors={colors}
+              />
+            )}
+
+            {summary.totalExpenses > 0 && (
+              <View style={styles.card}>
+                <Text style={styles.sectionTitle}>{t('dashboard.expensesByCategory')}</Text>
+                <ExpenseBreakdown
+                  expensesByCategory={summary.expensesByCategory}
+                  totalExpenses={summary.totalExpenses}
+                />
+              </View>
+            )}
+
+            <View style={styles.card}>
+              <Text style={styles.sectionTitle}>{t('dashboard.incomeEntries')}</Text>
+              <IncomeList incomes={incomes} onDelete={refresh} />
+            </View>
+
+            <View style={styles.card}>
+              <Text style={styles.sectionTitle}>{t('dashboard.expenseEntries')}</Text>
+              <ExpenseList expenses={expenses} onDelete={refresh} />
+            </View>
+
+            <View style={styles.card}>
+              <Text style={styles.sectionTitle}>{t('dashboard.profitDistributions')}</Text>
+              <ProfitDistributionList distributions={profitDistributions} onDelete={refresh} />
+            </View>
+          </>
+        )}
+      </ScrollView>
+    </GestureDetector>
   );
 }
 
-const styles = StyleSheet.create({
-  titleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
-  },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
-  },
-});
+// ─── Empty month prompt ──────────────────────────────────────────────────────
+
+function EmptyMonthCard({
+  hasStandards, onFill, onGoToSettings, colors,
+}: {
+  hasStandards: boolean;
+  onFill: () => void;
+  onGoToSettings: () => void;
+  colors: AppColors;
+}) {
+  const { t } = useTranslation();
+  const styles = useStyles(colors);
+  return (
+    <View style={[styles.card, styles.emptyMonthCard]}>
+      <SymbolView name="calendar.badge.plus" size={28} tintColor={colors.textMuted} />
+      <Text style={styles.emptyMonthTitle}>{t('dashboard.emptyMonthTitle')}</Text>
+      {hasStandards ? (
+        <Pressable style={styles.fillBtn} onPress={onFill}>
+          <SymbolView name="wand.and.stars" size={16} tintColor="#fff" />
+          <Text style={styles.fillBtnText}>{t('dashboard.fillWithDefaults')}</Text>
+        </Pressable>
+      ) : (
+        <>
+          <Text style={styles.emptyMonthHint}>{t('dashboard.noDefaultsHint')}</Text>
+          <Pressable style={styles.settingsBtn} onPress={onGoToSettings}>
+            <SymbolView name="gearshape.fill" size={14} tintColor={colors.accent} />
+            <Text style={styles.settingsBtnText}>{t('dashboard.goToSettings')}</Text>
+          </Pressable>
+        </>
+      )}
+    </View>
+  );
+}
+
+function useStyles(colors: AppColors) {
+  return useMemo(() => StyleSheet.create({
+    scroll: { flex: 1, backgroundColor: colors.background },
+    container: { padding: 16, paddingBottom: 32 },
+    loader: { marginTop: 48 },
+    section: { marginBottom: 4 },
+    card: {
+      backgroundColor: colors.card,
+      borderRadius: 16,
+      padding: 16,
+      marginBottom: 12,
+      shadowColor: '#000',
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.06,
+      shadowRadius: 8,
+      elevation: 3,
+    },
+    sectionTitle: {
+      fontSize: 15,
+      fontWeight: '700',
+      color: colors.text,
+      marginBottom: 14,
+    },
+    emptyMonthCard: {
+      alignItems: 'center',
+      gap: 10,
+      paddingVertical: 24,
+    },
+    emptyMonthTitle: {
+      fontSize: 16,
+      fontWeight: '700',
+      color: colors.text,
+    },
+    emptyMonthHint: {
+      fontSize: 13,
+      color: colors.textMuted,
+      textAlign: 'center',
+      lineHeight: 18,
+      paddingHorizontal: 8,
+    },
+    fillBtn: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 8,
+      backgroundColor: '#3b82f6',
+      paddingHorizontal: 20,
+      paddingVertical: 12,
+      borderRadius: 12,
+      marginTop: 4,
+    },
+    fillBtnText: {
+      color: '#fff',
+      fontSize: 15,
+      fontWeight: '700',
+    },
+    settingsBtn: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 6,
+      paddingHorizontal: 16,
+      paddingVertical: 10,
+      borderRadius: 10,
+      borderWidth: 1.5,
+      borderColor: colors.accent,
+      marginTop: 4,
+    },
+    settingsBtnText: {
+      fontSize: 14,
+      fontWeight: '600',
+      color: colors.accent,
+    },
+  }), [colors]);
+}

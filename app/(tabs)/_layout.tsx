@@ -1,35 +1,30 @@
-import { Tabs } from 'expo-router';
-import React from 'react';
-
-import { HapticTab } from '@/components/haptic-tab';
-import { IconSymbol } from '@/components/ui/icon-symbol';
-import { Colors } from '@/constants/theme';
-import { useColorScheme } from '@/hooks/use-color-scheme';
+import { NativeTabs, Icon, Label } from 'expo-router/unstable-native-tabs';
+import { useTranslation } from 'react-i18next';
 
 export default function TabLayout() {
-  const colorScheme = useColorScheme();
+  const { t } = useTranslation();
 
   return (
-    <Tabs
-      screenOptions={{
-        tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
-        headerShown: false,
-        tabBarButton: HapticTab,
-      }}>
-      <Tabs.Screen
-        name="index"
-        options={{
-          title: 'Home',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="house.fill" color={color} />,
-        }}
-      />
-      <Tabs.Screen
-        name="explore"
-        options={{
-          title: 'Explore',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="paperplane.fill" color={color} />,
-        }}
-      />
-    </Tabs>
+    <NativeTabs>
+      <NativeTabs.Trigger name="index">
+        <Icon sf="chart.bar.fill" />
+        <Label>{t('tabs.dashboard')}</Label>
+      </NativeTabs.Trigger>
+
+      <NativeTabs.Trigger name="add">
+        <Icon sf="plus.circle.fill" />
+        <Label>{t('tabs.addEntry')}</Label>
+      </NativeTabs.Trigger>
+
+      <NativeTabs.Trigger name="explore">
+        <Icon sf="magnifyingglass" />
+        <Label>{t('tabs.explore')}</Label>
+      </NativeTabs.Trigger>
+
+      <NativeTabs.Trigger name="settings">
+        <Icon sf="gearshape.fill" />
+        <Label>{t('tabs.settings')}</Label>
+      </NativeTabs.Trigger>
+    </NativeTabs>
   );
 }
