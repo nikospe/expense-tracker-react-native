@@ -1,50 +1,36 @@
-# Welcome to your Expo app 👋
+# 📊 Business Expense & Tax Tracker (React Native)
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+A professional, privacy-focused financial management mobile application designed for service-based companies and freelancers. This tool simplifies bookkeeping by calculating net profit, taxes, and tax prepayments in real-time.
 
-## Get started
+## ✨ Key Features
 
-1. Install dependencies
+*   **Interactive Dashboard:** Monthly overview with smooth drag-to-navigate functionality between months.
+*   **Smart Tax Logic:** Automatically calculates Net Profit, Income Tax, and Tax Prepayment (Prokatavoli Forou) based on customizable regional rates.
+*   **Expense Management:** Pre-defined expense categories with the ability for users to add custom ones.
+*   **Privacy First:** Built with **SQLite** for local storage. All sensitive financial data remains on the user's device—no external servers or cloud tracking.
+*   **Data Portability:** Robust **Export/Import** system allowing users to backup their data to a file or migrate it to a new device.
+*   **Advanced Settings:** 
+    *   **Multi-language Support:** Fully localized using **i18next**.
+    *   **Custom Themes:** Dynamic Dark and Light mode support.
+    *   **Financial Configuration:** Set default revenue/expense values and toggle tax prepayment calculations.
 
-   ```bash
-   npm install
-   ```
+## 🛠 Tech Stack
 
-2. Start the app
+*   **Framework:** React Native (Cross-platform iOS/Android)
+*   **Database:** SQLite (Local Persistence)
+*   **Localization:** i18next (Internationalization)
+*   **State Management:** [Πρόσθεσε εδώ π.χ. Redux ή Context API]
+*   **UI/UX:** Custom Animated Transitions & Theme Engine
 
-   ```bash
-   npx expo start
-   ```
+## 📸 Preview
 
-In the output, you'll find options to open the app in a
+| Monthly Dashboard | Expense Entry | Settings & Tax Config |
+|---|---|---|
+| ![Dashboard](https://via.placeholder.com/200x400?text=Dashboard) | ![Entries](https://via.placeholder.com/200x400?text=Entries) | ![Settings](https://via.placeholder.com/200x400?text=Settings) |
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+> **Note:** Replace the placeholder images above with your actual app screenshots to showcase the UI.
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
-
-```bash
-npm run reset-project
-```
-
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
-
-## Learn more
-
-To learn more about developing your project with Expo, look at the following resources:
-
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+## 🚀 Future Roadmap
+- [ ] PDF Report Generation for accounting.
+- [ ] Integration with bank APIs for automatic transaction syncing.
+- [ ] Cloud backup option with end-to-end encryption.
