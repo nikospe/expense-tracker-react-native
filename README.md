@@ -22,13 +22,55 @@ A professional, privacy-focused financial management mobile application designed
 *   **State Management:** [Πρόσθεσε εδώ π.χ. Redux ή Context API]
 *   **UI/UX:** Custom Animated Transitions & Theme Engine
 
-## 📸 Preview
+## 📸 App Showcase
 
-| Monthly Dashboard | Expense Entry | Settings & Tax Config |
-|---|---|---|
-| ![Dashboard](https://via.placeholder.com/200x400?text=Dashboard) | ![Entries](https://via.placeholder.com/200x400?text=Entries) | ![Settings](https://via.placeholder.com/200x400?text=Settings) |
+### 1. Dashboard (Main Overview)
+<table>
+  <tr>
+    <td><p align="center"><b>Dashboard View 1</b></p> <img width="603" height="1311" alt="IMG_0820" src="https://github.com/user-attachments/assets/92deb4ae-8c2d-44fb-8254-dd05947ec9c3" />
+ </td>
+    <td><p align="center"><b>Dashboard View 2</b></p> <img width="603" height="1311" alt="IMG_0821" src="https://github.com/user-attachments/assets/e8718d37-ced0-4431-80e9-7b969fa6f4d3" />
+ </td>
+  </tr>
+</table>
 
-> **Note:** Replace the placeholder images above with your actual app screenshots to showcase the UI.
+### 2. Entries & Management
+<table>
+  <tr>
+    <td><p align="center"><b>Revenue & Expenses</b></p> <img width="603" height="1311" alt="IMG_0817" src="https://github.com/user-attachments/assets/177a6d22-6863-465f-b601-04117e839c53" />
+ </td>
+  </tr>
+</table>
+
+### 3. Settings & Configuration
+<table>
+  <tr>
+    <td><p align="center"><b>General Settings</b></p> <img width="603" height="1311" alt="IMG_0818" src="https://github.com/user-attachments/assets/dfaff946-d67e-4d16-bec3-a4c5ef2390e8" />
+ </td>
+    <td><p align="center"><b>Tax Configuration</b></p> <img width="603" height="1311" alt="IMG_0819" src="https://github.com/user-attachments/assets/797089d7-b1d3-4b5b-b192-2730df078d1a" />
+ </td>
+  </tr>
+</table>
+
+### 4. Explore & Extra Features
+<table>
+  <tr>
+    <td><p align="center"><b>Advanced Features</b></p> <img width="603" height="1311" alt="IMG_0822" src="https://github.com/user-attachments/assets/1818ee11-5e65-4577-81ba-30c9fb75539e" />
+ </td>
+  </tr>
+</table>
+
+---
+
+## 🛠 Tech Stack
+*   **Framework:** React Native
+*   **Database:** SQLite
+*   **Localization:** i18next
+*   **Theming:** Dynamic Dark/Light Mode
+
+## 🚀 How to Run
+1. `npm install`
+2. `npx react-native run-android` or `npx react-native run-ios`
 
 ## 🚀 Future Roadmap
 - [ ] PDF Report Generation for accounting.
