@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { View, Text, ScrollView, StyleSheet, ActivityIndicator, Pressable } from 'react-native';
 import { useTranslation } from 'react-i18next';
-import { useRouter } from 'expo-router';
+import { useRouter, useFocusEffect } from 'expo-router';
 import { GestureDetector, Gesture } from 'react-native-gesture-handler';
 import { runOnJS } from 'react-native-reanimated';
 import { SymbolView } from 'expo-symbols';
@@ -71,6 +71,8 @@ export default function DashboardScreen() {
   const { incomes, expenses, profitDistributions, summary, loading, refresh } = useMonthData(
     year, month, effectivePrepaymentRate, taxRate / 100,
   );
+
+  useFocusEffect(useCallback(() => { refresh(); }, [refresh]));
 
   const isEmpty = !loading && incomes.length === 0 && expenses.length === 0 && profitDistributions.length === 0;
 
