@@ -32,16 +32,16 @@ export function MonthNavigator({ year, month, onPrev, onNext }: Props) {
         <Text style={styles.month}>{t(`months.${month}`)}</Text>
         <Text style={styles.year}>{year}</Text>
         {isCurrentMonth && <View style={styles.dot} />}
-      </View>
-
-      <View style={styles.sideRight}>
-        <Pressable onPress={toggleAmountsVisible} hitSlop={12} style={styles.arrow}>
+        <Pressable onPress={toggleAmountsVisible} hitSlop={12} style={styles.eyeBtn}>
           <SymbolView
             name={amountsVisible ? 'eye' : 'eye.slash'}
-            size={19}
+            size={22}
             tintColor={amountsVisible ? colors.textSecondary : colors.accent}
           />
         </Pressable>
+      </View>
+
+      <View style={styles.sideRight}>
         <Pressable
           onPress={onNext}
           style={[styles.arrow, isCurrentMonth && styles.arrowDisabled]}
@@ -83,6 +83,10 @@ function useStyles(colors: AppColors) {
     },
     arrowDisabled: {
       opacity: 0.4,
+    },
+    eyeBtn: {
+      padding: 6,
+      marginLeft: 2,
     },
     center: {
       alignItems: 'center',
