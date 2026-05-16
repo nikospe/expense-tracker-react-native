@@ -8,12 +8,14 @@ import {
   toggleStandardExpense,
   deleteStandardExpense,
 } from '@/lib/database';
-import { formatEuro } from '@/lib/calculations';
+import { formatEuro, MASKED } from '@/lib/calculations';
+import { useAppSettings } from '@/contexts/AppSettingsContext';
 import { EXPENSE_CATEGORIES, type ExpenseCategoryId, type StandardExpense } from '@/lib/types';
 import type { AppColors } from '@/lib/theme-colors';
 
 export function StandardExpenseSection({ colors }: { colors: AppColors }) {
   const { t } = useTranslation();
+  const { amountsVisible } = useAppSettings();
   const styles = useStyles(colors);
 
   const [items, setItems] = useState<StandardExpense[]>([]);
@@ -95,7 +97,7 @@ export function StandardExpenseSection({ colors }: { colors: AppColors }) {
                 )}
               </View>
               <Text style={[styles.itemAmount, { color: cat?.color ?? '#94a3b8' }]}>
-                {formatEuro(item.amount)}
+                {amountsVisible ? formatEuro(item.amount) : MASKED}
               </Text>
               <Switch
                 value={item.enabled === 1}

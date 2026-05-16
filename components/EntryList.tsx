@@ -3,9 +3,9 @@ import { View, Text, StyleSheet, Pressable, Alert } from 'react-native';
 import { SymbolView, type SFSymbol } from 'expo-symbols';
 import { useTranslation } from 'react-i18next';
 import { EXPENSE_CATEGORIES, type Income, type Expense, type ProfitDistribution } from '@/lib/types';
-import { formatEuro } from '@/lib/calculations';
+import { formatEuro, MASKED } from '@/lib/calculations';
 import { deleteIncome, deleteExpense, deleteProfitDistribution } from '@/lib/database';
-import { useAppColors } from '@/contexts/AppSettingsContext';
+import { useAppSettings } from '@/contexts/AppSettingsContext';
 import type { AppColors } from '@/lib/theme-colors';
 
 interface IncomeListProps {
@@ -15,7 +15,7 @@ interface IncomeListProps {
 
 export function IncomeList({ incomes, onDelete }: IncomeListProps) {
   const { t } = useTranslation();
-  const colors = useAppColors();
+  const { colors, amountsVisible } = useAppSettings();
   const styles = useStyles(colors);
 
   if (incomes.length === 0) {
@@ -33,6 +33,7 @@ export function IncomeList({ incomes, onDelete }: IncomeListProps) {
           key={item.id}
           label={item.description || t('common.income')}
           amount={item.amount}
+          amountsVisible={amountsVisible}
           color="#22c55e"
           icon={'arrow.down.circle.fill' as SFSymbol}
           onDelete={() =>
@@ -54,7 +55,7 @@ interface ExpenseListProps {
 
 export function ExpenseList({ expenses, onDelete }: ExpenseListProps) {
   const { t } = useTranslation();
-  const colors = useAppColors();
+  const { colors, amountsVisible } = useAppSettings();
   const styles = useStyles(colors);
 
   if (expenses.length === 0) {
@@ -79,6 +80,7 @@ export function ExpenseList({ expenses, onDelete }: ExpenseListProps) {
               ? t('categories.other')
               : t(`categories.${item.category}`)}
             amount={item.amount}
+            amountsVisible={amountsVisible}
             color={cat?.color ?? '#6b7280'}
             icon={cat?.icon ?? ('creditcard.fill' as SFSymbol)}
             onDelete={() =>
@@ -103,7 +105,7 @@ interface ProfitDistributionListProps {
 
 export function ProfitDistributionList({ distributions, onDelete }: ProfitDistributionListProps) {
   const { t } = useTranslation();
-  const colors = useAppColors();
+  const { colors, amountsVisible } = useAppSettings();
   const styles = useStyles(colors);
 
   if (distributions.length === 0) {
@@ -121,6 +123,7 @@ export function ProfitDistributionList({ distributions, onDelete }: ProfitDistri
           key={item.id}
           label={item.description || t('common.profitDist')}
           amount={item.amount}
+          amountsVisible={amountsVisible}
           color="#a855f7"
           icon={'arrow.up.forward.circle.fill' as SFSymbol}
           onDelete={() =>
@@ -141,13 +144,14 @@ interface EntryRowProps {
   label: string;
   sublabel?: string;
   amount: number;
+  amountsVisible: boolean;
   color: string;
   icon: SFSymbol;
   onDelete: () => void;
   colors: AppColors;
 }
 
-function EntryRow({ label, sublabel, amount, color, icon, onDelete, colors }: EntryRowProps) {
+function EntryRow({ label, sublabel, amount, amountsVisible, color, icon, onDelete, colors }: EntryRowProps) {
   const styles = useStyles(colors);
   return (
     <View style={styles.row}>
@@ -160,7 +164,9 @@ function EntryRow({ label, sublabel, amount, color, icon, onDelete, colors }: En
           <Text style={styles.rowSublabel}>{sublabel}</Text>
         ) : null}
       </View>
-      <Text style={[styles.rowAmount, { color }]}>{formatEuro(amount)}</Text>
+      <Text style={[styles.rowAmount, { color }]}>
+        {amountsVisible ? formatEuro(amount) : MASKED}
+      </Text>
       <Pressable onPress={onDelete} hitSlop={12} style={styles.deleteBtn}>
         <SymbolView name="trash" size={15} tintColor="#ef4444" />
       </Pressable>

@@ -1,6 +1,7 @@
 import { EXPENSE_CATEGORIES, type ExpenseCategoryId, type Income, type Expense, type MonthSummary } from './types';
 
 export const TAX_RATE = 0.22; // default fallback
+export const MASKED = '••••';
 
 export function calculateSummary(
   incomes: Income[],

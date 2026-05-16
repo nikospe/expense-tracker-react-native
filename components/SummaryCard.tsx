@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import { useAppColors } from '@/contexts/AppSettingsContext';
-import { formatEuro } from '@/lib/calculations';
+import { useAppSettings } from '@/contexts/AppSettingsContext';
+import { formatEuro, MASKED } from '@/lib/calculations';
 import type { AppColors } from '@/lib/theme-colors';
 
 interface Props {
@@ -13,7 +13,7 @@ interface Props {
 }
 
 export function SummaryCard({ label, amount, color, subtitle, large }: Props) {
-  const colors = useAppColors();
+  const { colors, amountsVisible } = useAppSettings();
   const styles = useStyles(colors);
 
   return (
@@ -22,9 +22,9 @@ export function SummaryCard({ label, amount, color, subtitle, large }: Props) {
       <View style={styles.content}>
         <Text style={styles.label}>{label}</Text>
         <Text style={[styles.amount, large && styles.amountLarge, { color }]}>
-          {formatEuro(amount)}
+          {amountsVisible ? formatEuro(amount) : MASKED}
         </Text>
-        {subtitle ? <Text style={styles.subtitle}>{subtitle}</Text> : null}
+        {subtitle && amountsVisible ? <Text style={styles.subtitle}>{subtitle}</Text> : null}
       </View>
     </View>
   );

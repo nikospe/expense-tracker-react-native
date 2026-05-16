@@ -28,6 +28,10 @@ interface AppSettingsContextValue {
   // Tax Rate
   taxRate: number;
   setTaxRate: (v: number) => void;
+
+  // Privacy
+  amountsVisible: boolean;
+  toggleAmountsVisible: () => void;
 }
 
 const AppSettingsContext = createContext<AppSettingsContextValue | null>(null);
@@ -48,6 +52,8 @@ export function AppSettingsProvider({ children }: { children: React.ReactNode })
     () => settingsStore.getPrepaymentRate(),
   );
   const [taxRate, setTaxRateState] = useState<number>(() => settingsStore.getTaxRate());
+  const [amountsVisible, setAmountsVisible] = useState(true);
+  const toggleAmountsVisible = useCallback(() => setAmountsVisible((v) => !v), []);
 
   const isDark = useMemo(() => {
     if (themePreference === 'dark') return true;
@@ -100,6 +106,7 @@ export function AppSettingsProvider({ children }: { children: React.ReactNode })
       prepaymentRate, setPrepaymentRate,
       effectivePrepaymentRate,
       taxRate, setTaxRate,
+      amountsVisible, toggleAmountsVisible,
     }),
     [
       themePreference, setThemePreference,
@@ -109,6 +116,7 @@ export function AppSettingsProvider({ children }: { children: React.ReactNode })
       prepaymentRate, setPrepaymentRate,
       effectivePrepaymentRate,
       taxRate, setTaxRate,
+      amountsVisible, toggleAmountsVisible,
     ],
   );
 

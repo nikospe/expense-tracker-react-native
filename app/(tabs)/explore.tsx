@@ -3,14 +3,13 @@ import { View, Text, ScrollView, StyleSheet, ActivityIndicator, Pressable } from
 import { SymbolView } from 'expo-symbols';
 import { useTranslation } from 'react-i18next';
 import { getAvailableYears, getYearMonths, type MonthRecord } from '@/lib/database';
-import { formatEuro } from '@/lib/calculations';
-import { useAppColors, useAppSettings } from '@/contexts/AppSettingsContext';
+import { formatEuro, MASKED } from '@/lib/calculations';
+import { useAppSettings } from '@/contexts/AppSettingsContext';
 import type { AppColors } from '@/lib/theme-colors';
 
 export default function ExploreScreen() {
   const { t } = useTranslation();
-  const colors = useAppColors();
-  const { effectivePrepaymentRate, prepaymentEnabled, taxRate } = useAppSettings();
+  const { colors, effectivePrepaymentRate, prepaymentEnabled, taxRate, amountsVisible } = useAppSettings();
   const styles = useStyles(colors);
 
   const [availableYears, setAvailableYears] = useState<number[]>([]);
@@ -81,22 +80,22 @@ export default function ExploreScreen() {
               colors={colors}
             />
             <View style={styles.summaryGrid}>
-              <SummaryRow label={t('explore.totalIncome')} value={totalIncome} color="#22c55e" colors={colors} />
-              <SummaryRow label={t('explore.totalExpenses')} value={totalExpenses} color="#ef4444" colors={colors} />
+              <SummaryRow label={t('explore.totalIncome')} value={totalIncome} color="#22c55e" colors={colors} amountsVisible={amountsVisible} />
+              <SummaryRow label={t('explore.totalExpenses')} value={totalExpenses} color="#ef4444" colors={colors} amountsVisible={amountsVisible} />
               <View style={styles.divider} />
-              <SummaryRow label={t('explore.grossProfit')} value={grossProfit} color="#f59e0b" colors={colors} />
-              <SummaryRow label={t('explore.incomeTax', { rate: taxRate.toFixed(0) })} value={annualTax} color="#f59e0b" colors={colors} />
+              <SummaryRow label={t('explore.grossProfit')} value={grossProfit} color="#f59e0b" colors={colors} amountsVisible={amountsVisible} />
+              <SummaryRow label={t('explore.incomeTax', { rate: taxRate.toFixed(0) })} value={annualTax} color="#f59e0b" colors={colors} amountsVisible={amountsVisible} />
               {prepaymentEnabled && annualPrepayment > 0 && (
-                <SummaryRow label={t('explore.taxPrepayment')} value={annualPrepayment} color="#a855f7" colors={colors} />
+                <SummaryRow label={t('explore.taxPrepayment')} value={annualPrepayment} color="#a855f7" colors={colors} amountsVisible={amountsVisible} />
               )}
-              <SummaryRow label={t('explore.taxObligation')} value={taxObligation} color="#ef4444" colors={colors} bold />
+              <SummaryRow label={t('explore.taxObligation')} value={taxObligation} color="#ef4444" colors={colors} bold amountsVisible={amountsVisible} />
               <View style={styles.divider} />
               {totalProfitDist > 0 && (
-                <SummaryRow label={t('explore.profitDist')} value={totalProfitDist} color="#a855f7" colors={colors} />
+                <SummaryRow label={t('explore.profitDist')} value={totalProfitDist} color="#a855f7" colors={colors} amountsVisible={amountsVisible} />
               )}
-              <SummaryRow label={t('explore.netWithoutDist')} value={netWithoutDist} color={netWithoutDist >= 0 ? '#22c55e' : '#ef4444'} colors={colors} bold highlight />
+              <SummaryRow label={t('explore.netWithoutDist')} value={netWithoutDist} color={netWithoutDist >= 0 ? '#22c55e' : '#ef4444'} colors={colors} bold highlight amountsVisible={amountsVisible} />
               {totalProfitDist > 0 && (
-                <SummaryRow label={t('explore.netWithDist')} value={netWithDist} color={netWithDist >= 0 ? '#3b82f6' : '#ef4444'} colors={colors} bold highlight />
+                <SummaryRow label={t('explore.netWithDist')} value={netWithDist} color={netWithDist >= 0 ? '#3b82f6' : '#ef4444'} colors={colors} bold highlight amountsVisible={amountsVisible} />
               )}
             </View>
           </View>
@@ -129,9 +128,15 @@ export default function ExploreScreen() {
                   return (
                     <View key={m.month} style={styles.tableRow}>
                       <Text style={styles.colMonth}>{t(`shortMonths.${m.month}`)}</Text>
-                      <Text style={[styles.colNum, { color: '#22c55e' }]}>{formatEuro(m.totalIncome)}</Text>
-                      <Text style={[styles.colNum, { color: '#ef4444' }]}>{formatEuro(m.totalExpenses)}</Text>
-                      <Text style={[styles.colNum, { color: net >= 0 ? '#22c55e' : '#ef4444', fontWeight: '700' }]}>{formatEuro(net)}</Text>
+                      <Text style={[styles.colNum, { color: '#22c55e' }]}>
+                        {amountsVisible ? formatEuro(m.totalIncome) : MASKED}
+                      </Text>
+                      <Text style={[styles.colNum, { color: '#ef4444' }]}>
+                        {amountsVisible ? formatEuro(m.totalExpenses) : MASKED}
+                      </Text>
+                      <Text style={[styles.colNum, { color: net >= 0 ? '#22c55e' : '#ef4444', fontWeight: '700' }]}>
+                        {amountsVisible ? formatEuro(net) : MASKED}
+                      </Text>
                     </View>
                   );
                 })}
@@ -176,15 +181,15 @@ function YearNav({ year, canPrev, canNext, onPrev, onNext, title, colors }: {
   );
 }
 
-function SummaryRow({ label, value, color, colors, bold, highlight }: {
-  label: string; value: number; color: string; colors: AppColors; bold?: boolean; highlight?: boolean;
+function SummaryRow({ label, value, color, colors, bold, highlight, amountsVisible }: {
+  label: string; value: number; color: string; colors: AppColors; bold?: boolean; highlight?: boolean; amountsVisible: boolean;
 }) {
   const styles = useStyles(colors);
   return (
     <View style={[styles.summaryRow, highlight && styles.summaryRowHighlight]}>
       <Text style={[styles.summaryLabel, bold && { fontWeight: '700' }]}>{label}</Text>
       <Text style={[styles.summaryValue, { color }, bold && { fontSize: 16, fontWeight: '800' }]}>
-        {formatEuro(value)}
+        {amountsVisible ? formatEuro(value) : MASKED}
       </Text>
     </View>
   );

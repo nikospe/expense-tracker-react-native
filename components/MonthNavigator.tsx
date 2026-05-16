@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import { View, Text, Pressable, StyleSheet } from 'react-native';
 import { SymbolView } from 'expo-symbols';
 import { useTranslation } from 'react-i18next';
-import { useAppColors } from '@/contexts/AppSettingsContext';
+import { useAppSettings } from '@/contexts/AppSettingsContext';
 import type { AppColors } from '@/lib/theme-colors';
 
 interface Props {
@@ -14,7 +14,7 @@ interface Props {
 
 export function MonthNavigator({ year, month, onPrev, onNext }: Props) {
   const { t } = useTranslation();
-  const colors = useAppColors();
+  const { colors, amountsVisible, toggleAmountsVisible } = useAppSettings();
   const styles = useStyles(colors);
 
   const now = new Date();
@@ -22,9 +22,11 @@ export function MonthNavigator({ year, month, onPrev, onNext }: Props) {
 
   return (
     <View style={styles.container}>
-      <Pressable onPress={onPrev} style={styles.arrow} hitSlop={12}>
-        <SymbolView name="chevron.left" size={20} tintColor={colors.textSecondary} />
-      </Pressable>
+      <View style={styles.sideLeft}>
+        <Pressable onPress={onPrev} style={styles.arrow} hitSlop={12}>
+          <SymbolView name="chevron.left" size={20} tintColor={colors.textSecondary} />
+        </Pressable>
+      </View>
 
       <View style={styles.center}>
         <Text style={styles.month}>{t(`months.${month}`)}</Text>
@@ -32,18 +34,27 @@ export function MonthNavigator({ year, month, onPrev, onNext }: Props) {
         {isCurrentMonth && <View style={styles.dot} />}
       </View>
 
-      <Pressable
-        onPress={onNext}
-        style={[styles.arrow, isCurrentMonth && styles.arrowDisabled]}
-        disabled={isCurrentMonth}
-        hitSlop={12}
-      >
-        <SymbolView
-          name="chevron.right"
-          size={20}
-          tintColor={isCurrentMonth ? colors.border : colors.textSecondary}
-        />
-      </Pressable>
+      <View style={styles.sideRight}>
+        <Pressable onPress={toggleAmountsVisible} hitSlop={12} style={styles.arrow}>
+          <SymbolView
+            name={amountsVisible ? 'eye' : 'eye.slash'}
+            size={19}
+            tintColor={amountsVisible ? colors.textSecondary : colors.accent}
+          />
+        </Pressable>
+        <Pressable
+          onPress={onNext}
+          style={[styles.arrow, isCurrentMonth && styles.arrowDisabled]}
+          disabled={isCurrentMonth}
+          hitSlop={12}
+        >
+          <SymbolView
+            name="chevron.right"
+            size={20}
+            tintColor={isCurrentMonth ? colors.border : colors.textSecondary}
+          />
+        </Pressable>
+      </View>
     </View>
   );
 }
@@ -53,8 +64,19 @@ function useStyles(colors: AppColors) {
     container: {
       flexDirection: 'row',
       alignItems: 'center',
-      justifyContent: 'space-between',
       paddingVertical: 12,
+    },
+    sideLeft: {
+      flex: 1,
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'flex-start',
+    },
+    sideRight: {
+      flex: 1,
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'flex-end',
     },
     arrow: {
       padding: 8,

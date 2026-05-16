@@ -8,12 +8,14 @@ import {
   toggleStandardIncome,
   deleteStandardIncome,
 } from '@/lib/database';
-import { formatEuro } from '@/lib/calculations';
+import { formatEuro, MASKED } from '@/lib/calculations';
+import { useAppSettings } from '@/contexts/AppSettingsContext';
 import type { StandardIncome } from '@/lib/types';
 import type { AppColors } from '@/lib/theme-colors';
 
 export function StandardIncomeSection({ colors }: { colors: AppColors }) {
   const { t } = useTranslation();
+  const { amountsVisible } = useAppSettings();
   const styles = useStyles(colors);
 
   const [items, setItems] = useState<StandardIncome[]>([]);
@@ -76,7 +78,9 @@ export function StandardIncomeSection({ colors }: { colors: AppColors }) {
               {item.description ? (
                 <Text style={styles.itemLabel} numberOfLines={1}>{item.description}</Text>
               ) : null}
-              <Text style={[styles.itemAmount, { color: '#22c55e' }]}>{formatEuro(item.amount)}</Text>
+              <Text style={[styles.itemAmount, { color: '#22c55e' }]}>
+                {amountsVisible ? formatEuro(item.amount) : MASKED}
+              </Text>
             </View>
             <Switch
               value={item.enabled === 1}

@@ -3,8 +3,8 @@ import { View, Text, StyleSheet } from 'react-native';
 import { SymbolView } from 'expo-symbols';
 import { useTranslation } from 'react-i18next';
 import { EXPENSE_CATEGORIES, type ExpenseCategoryId } from '@/lib/types';
-import { formatEuro } from '@/lib/calculations';
-import { useAppColors } from '@/contexts/AppSettingsContext';
+import { formatEuro, MASKED } from '@/lib/calculations';
+import { useAppSettings } from '@/contexts/AppSettingsContext';
 import type { AppColors } from '@/lib/theme-colors';
 
 interface Props {
@@ -14,7 +14,7 @@ interface Props {
 
 export function ExpenseBreakdown({ expensesByCategory, totalExpenses }: Props) {
   const { t } = useTranslation();
-  const colors = useAppColors();
+  const { colors, amountsVisible } = useAppSettings();
   const styles = useStyles(colors);
 
   const entries = EXPENSE_CATEGORIES
@@ -51,9 +51,9 @@ export function ExpenseBreakdown({ expensesByCategory, totalExpenses }: Props) {
             <SymbolView name={cat.icon} size={16} tintColor={cat.color} />
             <Text style={styles.rowLabel}>{t(`categories.${cat.id}`)}</Text>
             <View style={styles.rowRight}>
-              <Text style={styles.rowPct}>{pct.toFixed(0)}%</Text>
+              <Text style={styles.rowPct}>{amountsVisible ? `${pct.toFixed(0)}%` : '–'}</Text>
               <Text style={[styles.rowAmount, { color: cat.color }]}>
-                {formatEuro(amount)}
+                {amountsVisible ? formatEuro(amount) : MASKED}
               </Text>
             </View>
           </View>
