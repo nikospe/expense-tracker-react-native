@@ -1,5 +1,5 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
-import { useColorScheme } from 'react-native';
+import { useColorScheme, Appearance } from 'react-native';
 import { DarkTheme, DefaultTheme, type Theme } from '@react-navigation/native';
 import { settingsStore, type ThemePreference, type LanguagePreference } from '@/lib/settings-store';
 import { LightColors, DarkColors, type AppColors } from '@/lib/theme-colors';
@@ -67,6 +67,7 @@ export function AppSettingsProvider({ children }: { children: React.ReactNode })
   const setThemePreference = useCallback((v: ThemePreference) => {
     settingsStore.setTheme(v);
     setThemeState(v);
+    Appearance.setColorScheme(v === 'device' ? null : v);
   }, []);
 
   const setLanguagePreference = useCallback((v: LanguagePreference) => {
@@ -95,6 +96,8 @@ export function AppSettingsProvider({ children }: { children: React.ReactNode })
   useEffect(() => {
     const lang = languagePreference === 'device' ? getDeviceLanguage() : languagePreference;
     i18n.changeLanguage(lang);
+    const theme = settingsStore.getTheme();
+    if (theme !== 'device') Appearance.setColorScheme(theme);
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const value = useMemo<AppSettingsContextValue>(

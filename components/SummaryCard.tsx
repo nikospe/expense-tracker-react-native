@@ -1,5 +1,7 @@
 import { useMemo } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
+import { SymbolView } from 'expo-symbols';
+import type { SFSymbol } from 'expo-symbols';
 import { useAppSettings } from '@/contexts/AppSettingsContext';
 import { formatEuro, MASKED } from '@/lib/calculations';
 import type { AppColors } from '@/lib/theme-colors';
@@ -8,24 +10,26 @@ interface Props {
   label: string;
   amount: number;
   color: string;
+  icon: SFSymbol;
   subtitle?: string;
-  large?: boolean;
 }
 
-export function SummaryCard({ label, amount, color, subtitle, large }: Props) {
+export function SummaryCard({ label, amount, color, icon, subtitle }: Props) {
   const { colors, amountsVisible } = useAppSettings();
   const styles = useStyles(colors);
 
   return (
-    <View style={[styles.card, large && styles.cardLarge]}>
-      <View style={[styles.accent, { backgroundColor: color }]} />
-      <View style={styles.content}>
-        <Text style={styles.label}>{label}</Text>
-        <Text style={[styles.amount, large && styles.amountLarge, { color }]}>
-          {amountsVisible ? formatEuro(amount) : MASKED}
-        </Text>
-        {subtitle && amountsVisible ? <Text style={styles.subtitle}>{subtitle}</Text> : null}
+    <View style={[styles.card, { borderLeftColor: color }]}>
+      <View style={[styles.iconBox, { backgroundColor: color + '28' }]}>
+        <SymbolView name={icon} size={22} tintColor={color} />
       </View>
+      <Text style={styles.label}>{label}</Text>
+      <Text style={[styles.amount, { color }]}>
+        {amountsVisible ? formatEuro(amount) : MASKED}
+      </Text>
+      {subtitle && amountsVisible ? (
+        <Text style={styles.subtitle} numberOfLines={2}>{subtitle}</Text>
+      ) : null}
     </View>
   );
 }
@@ -33,48 +37,40 @@ export function SummaryCard({ label, amount, color, subtitle, large }: Props) {
 function useStyles(colors: AppColors) {
   return useMemo(() => StyleSheet.create({
     card: {
+      flex: 1,
       backgroundColor: colors.card,
       borderRadius: 16,
-      flexDirection: 'row',
-      overflow: 'hidden',
+      borderLeftWidth: 3.5,
+      padding: 14,
       shadowColor: '#000',
       shadowOffset: { width: 0, height: 2 },
-      shadowOpacity: 0.06,
+      shadowOpacity: 0.08,
       shadowRadius: 8,
       elevation: 3,
-      marginBottom: 12,
     },
-    cardLarge: {
-      shadowOpacity: 0.1,
-      shadowRadius: 12,
-    },
-    accent: {
-      width: 5,
-    },
-    content: {
-      flex: 1,
-      paddingHorizontal: 16,
-      paddingVertical: 14,
+    iconBox: {
+      width: 44,
+      height: 44,
+      borderRadius: 12,
+      alignItems: 'center',
+      justifyContent: 'center',
+      marginBottom: 10,
     },
     label: {
-      fontSize: 13,
+      fontSize: 12,
       color: colors.textSecondary,
       fontWeight: '500',
       marginBottom: 4,
-      textTransform: 'uppercase',
-      letterSpacing: 0.5,
     },
     amount: {
-      fontSize: 22,
+      fontSize: 20,
       fontWeight: '700',
-    },
-    amountLarge: {
-      fontSize: 28,
+      marginBottom: 3,
     },
     subtitle: {
-      fontSize: 12,
+      fontSize: 11,
       color: colors.textMuted,
-      marginTop: 2,
+      lineHeight: 15,
     },
   }), [colors]);
 }

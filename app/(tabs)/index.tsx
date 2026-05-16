@@ -11,7 +11,8 @@ import { ExpenseBreakdown } from '@/components/ExpenseBreakdown';
 import { IncomeList, ExpenseList, ProfitDistributionList } from '@/components/EntryList';
 import { useMonthData } from '@/hooks/use-month-data';
 import { getStandardIncomes, getStandardExpenses, forceApplyStandardsToMonth } from '@/lib/database';
-import { formatEuro, TAX_RATE } from '@/lib/calculations';
+import { formatEuro } from '@/lib/calculations';
+import type { SFSymbol } from 'expo-symbols';
 import { useAppColors, useAppSettings } from '@/contexts/AppSettingsContext';
 import type { AppColors } from '@/lib/theme-colors';
 
@@ -73,6 +74,78 @@ export default function DashboardScreen() {
 
   const isEmpty = !loading && incomes.length === 0 && expenses.length === 0 && profitDistributions.length === 0;
 
+  type CardItem = {
+    key: string;
+    label: string;
+    amount: number;
+    color: string;
+    icon: SFSymbol;
+    subtitle?: string;
+  };
+
+  const summaryRows = useMemo<CardItem[][]>(() => {
+    const items: CardItem[] = [
+      {
+        key: 'income',
+        label: t('dashboard.totalIncome'),
+        amount: summary.totalIncome,
+        color: '#22c55e',
+        icon: 'chart.line.uptrend.xyaxis' as SFSymbol,
+      },
+      {
+        key: 'expenses',
+        label: t('dashboard.totalExpenses'),
+        amount: summary.totalExpenses,
+        color: '#ef4444',
+        icon: 'chart.line.downtrend.xyaxis' as SFSymbol,
+      },
+      {
+        key: 'gross',
+        label: t('dashboard.grossProfit'),
+        amount: summary.grossProfit,
+        color: summary.grossProfit >= 0 ? '#f59e0b' : '#ef4444',
+        icon: 'chart.bar.fill' as SFSymbol,
+        subtitle: t('dashboard.beforeTax'),
+      },
+      {
+        key: 'tax',
+        label: t('dashboard.tax', { rate: taxRate.toFixed(0) }),
+        amount: summary.tax,
+        color: '#f59e0b',
+        icon: 'percent' as SFSymbol,
+        subtitle: summary.grossProfit > 0
+          ? t('dashboard.onGrossProfit', { amount: formatEuro(summary.grossProfit) })
+          : t('dashboard.noTaxableProfit'),
+      },
+    ];
+
+    if (prepaymentEnabled && summary.prepayment > 0) {
+      items.push({
+        key: 'prepayment',
+        label: t('dashboard.prepayment', { rate: (prepaymentRate * 100).toFixed(0) }),
+        amount: summary.prepayment,
+        color: '#a855f7',
+        icon: 'chart.pie' as SFSymbol,
+        subtitle: formatEuro(summary.tax) + ' × ' + (prepaymentRate * 100).toFixed(0) + '%',
+      });
+    }
+
+    items.push({
+      key: 'net',
+      label: t('dashboard.netProfit'),
+      amount: summary.netProfit,
+      color: summary.netProfit >= 0 ? '#3b82f6' : '#ef4444',
+      icon: 'wallet.pass' as SFSymbol,
+      subtitle: t('dashboard.afterTaxAndExpenses'),
+    });
+
+    const rows: CardItem[][] = [];
+    for (let i = 0; i < items.length; i += 2) {
+      rows.push(items.slice(i, i + 2));
+    }
+    return rows;
+  }, [summary, prepaymentEnabled, prepaymentRate, taxRate, t]);
+
   // When landing on an empty past month, check if standards are configured
   useEffect(() => {
     if (!isCurrentMonth && isEmpty) {
@@ -102,50 +175,21 @@ export default function DashboardScreen() {
           <ActivityIndicator style={styles.loader} color="#22c55e" />
         ) : (
           <>
-            <View style={styles.section}>
-              <SummaryCard
-                label={t('dashboard.totalIncome')}
-                amount={summary.totalIncome}
-                color="#22c55e"
-              />
-              <SummaryCard
-                label={t('dashboard.totalExpenses')}
-                amount={summary.totalExpenses}
-                color="#ef4444"
-              />
-              <SummaryCard
-                label={t('dashboard.grossProfit')}
-                amount={summary.grossProfit}
-                color={summary.grossProfit >= 0 ? '#f59e0b' : '#ef4444'}
-                subtitle={t('dashboard.beforeTax')}
-              />
-              <SummaryCard
-                label={t('dashboard.tax', { rate: (TAX_RATE * 100).toFixed(0) })}
-                amount={summary.tax}
-                color="#f59e0b"
-                subtitle={
-                  summary.grossProfit > 0
-                    ? t('dashboard.onGrossProfit', { amount: formatEuro(summary.grossProfit) })
-                    : t('dashboard.noTaxableProfit')
-                }
-              />
-              {prepaymentEnabled && summary.prepayment > 0 && (
-                <SummaryCard
-                  label={t('dashboard.prepayment', {
-                    rate: (prepaymentRate * 100).toFixed(0),
-                  })}
-                  amount={summary.prepayment}
-                  color="#a855f7"
-                  subtitle={formatEuro(summary.tax) + ' × ' + (prepaymentRate * 100).toFixed(0) + '%'}
-                />
-              )}
-              <SummaryCard
-                label={t('dashboard.netProfit')}
-                amount={summary.netProfit}
-                color={summary.netProfit >= 0 ? '#3b82f6' : '#ef4444'}
-                subtitle={t('dashboard.afterTaxAndExpenses')}
-                large
-              />
+            <View style={styles.grid}>
+              {summaryRows.map((row, rowIdx) => (
+                <View key={rowIdx} style={styles.gridRow}>
+                  {row.map((card) => (
+                    <SummaryCard
+                      key={card.key}
+                      label={card.label}
+                      amount={card.amount}
+                      color={card.color}
+                      icon={card.icon}
+                      subtitle={card.subtitle}
+                    />
+                  ))}
+                </View>
+              ))}
             </View>
 
             {/* Empty past month prompt */}
@@ -228,7 +272,8 @@ function useStyles(colors: AppColors) {
     scroll: { flex: 1, backgroundColor: colors.background },
     container: { padding: 16, paddingBottom: 32 },
     loader: { marginTop: 48 },
-    section: { marginBottom: 4 },
+    grid: { gap: 10, marginBottom: 16 },
+    gridRow: { flexDirection: 'row', gap: 10 },
     card: {
       backgroundColor: colors.card,
       borderRadius: 16,
