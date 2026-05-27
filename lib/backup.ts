@@ -6,9 +6,9 @@ import { settingsStore } from './settings-store';
 import type { ThemePreference, LanguagePreference } from './settings-store';
 import type { PrepaymentRate } from './types';
 
-interface IncomeRow       { id: number; year: number; month: number; amount: number; description: string; created_at: string; }
+interface IncomeRow       { id: number; year: number; month: number; amount: number; client_name: string; description: string; created_at: string; }
 interface ExpenseRow      { id: number; year: number; month: number; category: string; amount: number; description: string; created_at: string; }
-interface ProfitDistRow   { id: number; year: number; month: number; amount: number; description: string; created_at: string; }
+interface ProfitDistRow   { id: number; year: number; month: number; amount: number; shareholder_name: string; description: string; created_at: string; }
 interface StdIncRow       { id: number; description: string; amount: number; enabled: number; }
 interface StdExpRow       { id: number; category: string; amount: number; description: string; enabled: number; }
 interface AppliedRow      { year: number; month: number; }
@@ -121,8 +121,8 @@ export async function importBackup(): Promise<'cancelled' | { settings: Restored
 
   for (const r of data.incomes) {
     await db.runAsync(
-      'INSERT INTO incomes (id, year, month, amount, description, created_at) VALUES (?, ?, ?, ?, ?, ?)',
-      [r.id, r.year, r.month, r.amount, r.description, r.created_at],
+      'INSERT INTO incomes (id, year, month, amount, client_name, description, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)',
+      [r.id, r.year, r.month, r.amount, r.client_name ?? '', r.description, r.created_at],
     );
   }
   for (const r of data.expenses) {
@@ -133,8 +133,8 @@ export async function importBackup(): Promise<'cancelled' | { settings: Restored
   }
   for (const r of (data.profit_distributions ?? [])) {
     await db.runAsync(
-      'INSERT INTO profit_distributions (id, year, month, amount, description, created_at) VALUES (?, ?, ?, ?, ?, ?)',
-      [r.id, r.year, r.month, r.amount, r.description, r.created_at],
+      'INSERT INTO profit_distributions (id, year, month, amount, shareholder_name, description, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)',
+      [r.id, r.year, r.month, r.amount, r.shareholder_name ?? '', r.description, r.created_at],
     );
   }
   for (const r of data.standard_incomes) {

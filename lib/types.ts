@@ -53,6 +53,7 @@ export interface Income {
   year: number;
   month: number;
   amount: number;
+  client_name: string;
   description: string;
   created_at: string;
 }
@@ -72,6 +73,7 @@ export interface ProfitDistribution {
   year: number;
   month: number;
   amount: number;
+  shareholder_name: string;
   description: string;
   created_at: string;
 }

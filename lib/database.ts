@@ -68,6 +68,14 @@ async function initSchema(database: SQLite.SQLiteDatabase): Promise<void> {
 
     CREATE INDEX IF NOT EXISTS idx_profit_dist_ym ON profit_distributions (year, month);
   `);
+
+  // Additive migrations — safe to run on every open
+  try {
+    await database.execAsync(`ALTER TABLE incomes ADD COLUMN client_name TEXT NOT NULL DEFAULT ''`);
+  } catch { /* column already exists */ }
+  try {
+    await database.execAsync(`ALTER TABLE profit_distributions ADD COLUMN shareholder_name TEXT NOT NULL DEFAULT ''`);
+  } catch { /* column already exists */ }
 }
 
 // ─── Incomes ────────────────────────────────────────────────────────────────
@@ -77,11 +85,12 @@ export async function addIncome(
   month: number,
   amount: number,
   description: string = '',
+  clientName: string = '',
 ): Promise<number> {
   const database = await getDatabase();
   const result = await database.runAsync(
-    'INSERT INTO incomes (year, month, amount, description) VALUES (?, ?, ?, ?)',
-    [year, month, amount, description],
+    'INSERT INTO incomes (year, month, amount, description, client_name) VALUES (?, ?, ?, ?, ?)',
+    [year, month, amount, description, clientName],
   );
   return result.lastInsertRowId;
 }
@@ -136,11 +145,12 @@ export async function addProfitDistribution(
   month: number,
   amount: number,
   description: string = '',
+  shareholderName: string = '',
 ): Promise<number> {
   const database = await getDatabase();
   const result = await database.runAsync(
-    'INSERT INTO profit_distributions (year, month, amount, description) VALUES (?, ?, ?, ?)',
-    [year, month, amount, description],
+    'INSERT INTO profit_distributions (year, month, amount, description, shareholder_name) VALUES (?, ?, ?, ?, ?)',
+    [year, month, amount, description, shareholderName],
   );
   return result.lastInsertRowId;
 }
@@ -352,18 +362,22 @@ export async function applyStandardsToMonth(year: number, month: number): Promis
 
 // ─── Recent Unique Amounts ───────────────────────────────────────────────────
 
-export async function getRecentIncomeAmounts(limit = 5): Promise<number[]> {
+export interface RecentIncomeEntry {
+  amount: number;
+  client_name: string;
+}
+
+export async function getRecentIncomeEntries(limit = 5): Promise<RecentIncomeEntry[]> {
   const database = await getDatabase();
-  const rows = await database.getAllAsync<{ amount: number }>(
+  return database.getAllAsync<RecentIncomeEntry>(
     `WITH ranked AS (
-       SELECT amount, MAX(created_at) AS last_added
+       SELECT amount, client_name, MAX(created_at) AS last_added
        FROM incomes
-       GROUP BY amount
+       GROUP BY amount, client_name
      )
-     SELECT amount FROM ranked ORDER BY last_added DESC LIMIT ?`,
+     SELECT amount, client_name FROM ranked ORDER BY last_added DESC LIMIT ?`,
     [limit],
   );
-  return rows.map((r) => r.amount);
 }
 
 export interface RecentExpenseEntry {
@@ -384,18 +398,22 @@ export async function getRecentExpenseEntries(limit = 5): Promise<RecentExpenseE
   );
 }
 
-export async function getRecentDistributionAmounts(limit = 5): Promise<number[]> {
+export interface RecentDistributionEntry {
+  amount: number;
+  shareholder_name: string;
+}
+
+export async function getRecentDistributionEntries(limit = 5): Promise<RecentDistributionEntry[]> {
   const database = await getDatabase();
-  const rows = await database.getAllAsync<{ amount: number }>(
+  return database.getAllAsync<RecentDistributionEntry>(
     `WITH ranked AS (
-       SELECT amount, MAX(created_at) AS last_added
+       SELECT amount, shareholder_name, MAX(created_at) AS last_added
        FROM profit_distributions
-       GROUP BY amount
+       GROUP BY amount, shareholder_name
      )
-     SELECT amount FROM ranked ORDER BY last_added DESC LIMIT ?`,
+     SELECT amount, shareholder_name FROM ranked ORDER BY last_added DESC LIMIT ?`,
     [limit],
   );
-  return rows.map((r) => r.amount);
 }
 
 export async function deleteAllData(): Promise<void> {

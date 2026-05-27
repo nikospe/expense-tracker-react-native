@@ -25,6 +25,8 @@ export default function AddEntryScreen() {
   const [category, setCategory] = useState<ExpenseCategoryId>('general');
   const [year, setYear] = useState(now.getFullYear());
   const [month, setMonth] = useState(now.getMonth() + 1);
+  const [clientName, setClientName] = useState('');
+  const [shareholderName, setShareholderName] = useState('');
   const [saving, setSaving] = useState(false);
   const [refreshKey, setRefreshKey] = useState(0);
 
@@ -37,14 +39,16 @@ export default function AddEntryScreen() {
     setSaving(true);
     try {
       if (entryType === 'income') {
-        await addIncome(year, month, parsed, description.trim());
+        await addIncome(year, month, parsed, description.trim(), clientName.trim());
       } else if (entryType === 'expense') {
         await addExpense(year, month, category, parsed, description.trim());
       } else if (entryType === 'profit_distribution') {
-        await addProfitDistribution(year, month, parsed, description.trim());
+        await addProfitDistribution(year, month, parsed, description.trim(), shareholderName.trim());
       }
       setAmount('');
       setDescription('');
+      setClientName('');
+      setShareholderName('');
       setRefreshKey((k) => k + 1);
       const typeLabel = entryType === 'income'
         ? t('common.income')
@@ -134,6 +138,36 @@ export default function AddEntryScreen() {
             />
           </View>
         </View>
+
+        {/* Client Name (income only) */}
+        {entryType === 'income' && (
+          <View style={styles.card}>
+            <Text style={styles.fieldLabel}>{t('add.clientNameLabel')}</Text>
+            <TextInput
+              style={[styles.descInput, { borderBottomColor: colors.inputBorder, color: colors.text }]}
+              value={clientName}
+              onChangeText={setClientName}
+              placeholder={t('add.clientNamePlaceholder')}
+              placeholderTextColor={colors.textMuted}
+              returnKeyType="done"
+            />
+          </View>
+        )}
+
+        {/* Shareholder Name (distribution only) */}
+        {entryType === 'profit_distribution' && (
+          <View style={styles.card}>
+            <Text style={styles.fieldLabel}>{t('add.shareholderLabel')}</Text>
+            <TextInput
+              style={[styles.descInput, { borderBottomColor: colors.inputBorder, color: colors.text }]}
+              value={shareholderName}
+              onChangeText={setShareholderName}
+              placeholder={t('add.shareholderPlaceholder')}
+              placeholderTextColor={colors.textMuted}
+              returnKeyType="done"
+            />
+          </View>
+        )}
 
         {/* Category (expense only) */}
         {entryType === 'expense' && (

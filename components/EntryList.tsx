@@ -31,7 +31,8 @@ export function IncomeList({ incomes, onDelete }: IncomeListProps) {
       {incomes.map((item) => (
         <EntryRow
           key={item.id}
-          label={item.description || t('common.income')}
+          label={item.client_name || item.description || t('common.income')}
+          sublabel={item.client_name && item.description ? item.description : undefined}
           amount={item.amount}
           amountsVisible={amountsVisible}
           color="#22c55e"
@@ -121,7 +122,8 @@ export function ProfitDistributionList({ distributions, onDelete }: ProfitDistri
       {distributions.map((item) => (
         <EntryRow
           key={item.id}
-          label={item.description || t('common.profitDist')}
+          label={item.shareholder_name || item.description || t('common.profitDist')}
+          sublabel={item.shareholder_name && item.description ? item.description : undefined}
           amount={item.amount}
           amountsVisible={amountsVisible}
           color="#a855f7"

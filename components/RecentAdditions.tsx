@@ -3,13 +3,12 @@ import { View, Text, Pressable, StyleSheet, Alert } from 'react-native';
 import { SymbolView } from 'expo-symbols';
 import { useTranslation } from 'react-i18next';
 import {
-  getRecentIncomeAmounts,
+  getRecentIncomeEntries,
   getRecentExpenseEntries,
-  getRecentDistributionAmounts,
+  getRecentDistributionEntries,
   addIncome,
   addExpense,
   addProfitDistribution,
-  type RecentExpenseEntry,
 } from '@/lib/database';
 import { EXPENSE_CATEGORIES, type ExpenseCategoryId } from '@/lib/types';
 import { useAppColors } from '@/contexts/AppSettingsContext';
@@ -17,9 +16,12 @@ import type { AppColors } from '@/lib/theme-colors';
 
 type EntryType = 'income' | 'expense' | 'profit_distribution';
 
-type RecentItem =
-  | { amount: number; category: undefined }
-  | { amount: number; category: ExpenseCategoryId };
+type RecentItem = {
+  amount: number;
+  category?: ExpenseCategoryId;
+  client_name?: string;
+  shareholder_name?: string;
+};
 
 interface Props {
   entryType: EntryType;
@@ -42,14 +44,14 @@ export function RecentAdditions({ entryType, accentColor, refreshKey, year, mont
     const load = async () => {
       let data: RecentItem[];
       if (entryType === 'income') {
-        const amounts = await getRecentIncomeAmounts();
-        data = amounts.map((amount) => ({ amount, category: undefined }));
+        const entries = await getRecentIncomeEntries();
+        data = entries.map((e) => ({ amount: e.amount, client_name: e.client_name }));
       } else if (entryType === 'expense') {
         const entries = await getRecentExpenseEntries();
         data = entries.map((e) => ({ amount: e.amount, category: e.category }));
       } else {
-        const amounts = await getRecentDistributionAmounts();
-        data = amounts.map((amount) => ({ amount, category: undefined }));
+        const entries = await getRecentDistributionEntries();
+        data = entries.map((e) => ({ amount: e.amount, shareholder_name: e.shareholder_name }));
       }
       if (!cancelled) setItems(data);
     };
@@ -64,11 +66,11 @@ export function RecentAdditions({ entryType, accentColor, refreshKey, year, mont
     setSavingIdx(idx);
     try {
       if (entryType === 'income') {
-        await addIncome(year, month, item.amount);
+        await addIncome(year, month, item.amount, '', item.client_name ?? '');
       } else if (entryType === 'expense' && item.category) {
         await addExpense(year, month, item.category, item.amount);
       } else if (entryType === 'profit_distribution') {
-        await addProfitDistribution(year, month, item.amount);
+        await addProfitDistribution(year, month, item.amount, '', item.shareholder_name ?? '');
       }
       const typeLabel = entryType === 'income'
         ? t('common.income')
@@ -94,6 +96,7 @@ export function RecentAdditions({ entryType, accentColor, refreshKey, year, mont
             : null;
           const chipColor = cat ? cat.color : accentColor;
           const isSaving = savingIdx === i;
+          const amountStr = `€${item.amount % 1 === 0 ? item.amount.toFixed(0) : item.amount.toFixed(2)}`;
 
           return (
             <Pressable
@@ -106,17 +109,35 @@ export function RecentAdditions({ entryType, accentColor, refreshKey, year, mont
               onPress={() => handleTap(item, i)}
               disabled={savingIdx !== null}
             >
-              {cat && (
-                <SymbolView name={cat.icon} size={14} tintColor={chipColor} />
-              )}
+              {/* Expense: icon + category name + amount */}
+              {cat && <SymbolView name={cat.icon} size={14} tintColor={chipColor} />}
               {cat && (
                 <Text style={[styles.chipCategory, { color: chipColor }]}>
                   {t(`categories.${cat.id}`)}
                 </Text>
               )}
-              <Text style={[styles.chipAmount, { color: chipColor }]}>
-                €{item.amount % 1 === 0 ? item.amount.toFixed(0) : item.amount.toFixed(2)}
-              </Text>
+
+              {/* Income: client name + amount */}
+              {!cat && item.client_name ? (
+                <>
+                  <SymbolView name="person.fill" size={13} tintColor={chipColor} />
+                  <Text style={[styles.chipCategory, { color: chipColor }]}>
+                    {item.client_name}
+                  </Text>
+                </>
+              ) : null}
+
+              {/* Distribution: shareholder name + amount */}
+              {!cat && item.shareholder_name ? (
+                <>
+                  <SymbolView name="person.2.fill" size={13} tintColor={chipColor} />
+                  <Text style={[styles.chipCategory, { color: chipColor }]}>
+                    {item.shareholder_name}
+                  </Text>
+                </>
+              ) : null}
+
+              <Text style={[styles.chipAmount, { color: chipColor }]}>{amountStr}</Text>
             </Pressable>
           );
         })}
