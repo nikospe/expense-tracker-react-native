@@ -103,6 +103,14 @@ const en = {
     shareholderLabel:          'Shareholder',
     shareholderPlaceholder:    'e.g. John Smith',
   },
+  edit: {
+    incomeTitle:       'Edit Income',
+    expenseTitle:      'Edit Expense',
+    distributionTitle: 'Edit Distribution',
+    saveChanges:       'Save Changes',
+    savedTitle:        'Updated',
+    savedMsg:          'Entry updated successfully.',
+  },
   history: {
     title:              'Monthly Overview',
     last6Months:        'Last 6 Months',
@@ -281,6 +289,14 @@ const el: typeof en = {
     clientNamePlaceholder:     'π.χ. Εταιρεία Α.Ε.',
     shareholderLabel:          'Μέτοχος',
     shareholderPlaceholder:    'π.χ. Γιάννης Παπαδόπουλος',
+  },
+  edit: {
+    incomeTitle:       'Επεξεργασία Εσόδου',
+    expenseTitle:      'Επεξεργασία Εξόδου',
+    distributionTitle: 'Επεξεργασία Διανομής',
+    saveChanges:       'Αποθήκευση Αλλαγών',
+    savedTitle:        'Ενημερώθηκε',
+    savedMsg:          'Η εγγραφή ενημερώθηκε με επιτυχία.',
   },
   history: {
     title:              'Μηνιαία Επισκόπηση',

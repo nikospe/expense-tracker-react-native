@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 import { View, Text, StyleSheet, Pressable, Alert } from 'react-native';
 import { SymbolView, type SFSymbol } from 'expo-symbols';
 import { useTranslation } from 'react-i18next';
+import * as Haptics from 'expo-haptics';
 import { EXPENSE_CATEGORIES, type Income, type Expense, type ProfitDistribution } from '@/lib/types';
 import { formatEuro, MASKED } from '@/lib/calculations';
 import { deleteIncome, deleteExpense, deleteProfitDistribution } from '@/lib/database';
@@ -11,9 +12,10 @@ import type { AppColors } from '@/lib/theme-colors';
 interface IncomeListProps {
   incomes: Income[];
   onDelete: () => void;
+  onEdit: (entry: Income) => void;
 }
 
-export function IncomeList({ incomes, onDelete }: IncomeListProps) {
+export function IncomeList({ incomes, onDelete, onEdit }: IncomeListProps) {
   const { t } = useTranslation();
   const { colors, amountsVisible } = useAppSettings();
   const styles = useStyles(colors);
@@ -42,6 +44,7 @@ export function IncomeList({ incomes, onDelete }: IncomeListProps) {
               deleteIncome(item.id).then(onDelete),
             )
           }
+          onEdit={() => onEdit(item)}
           colors={colors}
         />
       ))}
@@ -52,9 +55,10 @@ export function IncomeList({ incomes, onDelete }: IncomeListProps) {
 interface ExpenseListProps {
   expenses: Expense[];
   onDelete: () => void;
+  onEdit: (entry: Expense) => void;
 }
 
-export function ExpenseList({ expenses, onDelete }: ExpenseListProps) {
+export function ExpenseList({ expenses, onDelete, onEdit }: ExpenseListProps) {
   const { t } = useTranslation();
   const { colors, amountsVisible } = useAppSettings();
   const styles = useStyles(colors);
@@ -89,6 +93,7 @@ export function ExpenseList({ expenses, onDelete }: ExpenseListProps) {
                 deleteExpense(item.id).then(onDelete),
               )
             }
+            onEdit={() => onEdit(item)}
             colors={colors}
           />
         );
@@ -102,9 +107,10 @@ export function ExpenseList({ expenses, onDelete }: ExpenseListProps) {
 interface ProfitDistributionListProps {
   distributions: ProfitDistribution[];
   onDelete: () => void;
+  onEdit: (entry: ProfitDistribution) => void;
 }
 
-export function ProfitDistributionList({ distributions, onDelete }: ProfitDistributionListProps) {
+export function ProfitDistributionList({ distributions, onDelete, onEdit }: ProfitDistributionListProps) {
   const { t } = useTranslation();
   const { colors, amountsVisible } = useAppSettings();
   const styles = useStyles(colors);
@@ -133,6 +139,7 @@ export function ProfitDistributionList({ distributions, onDelete }: ProfitDistri
               deleteProfitDistribution(item.id).then(onDelete),
             )
           }
+          onEdit={() => onEdit(item)}
           colors={colors}
         />
       ))}
@@ -150,13 +157,21 @@ interface EntryRowProps {
   color: string;
   icon: SFSymbol;
   onDelete: () => void;
+  onEdit: () => void;
   colors: AppColors;
 }
 
-function EntryRow({ label, sublabel, amount, amountsVisible, color, icon, onDelete, colors }: EntryRowProps) {
+function EntryRow({ label, sublabel, amount, amountsVisible, color, icon, onDelete, onEdit, colors }: EntryRowProps) {
   const styles = useStyles(colors);
   return (
-    <View style={styles.row}>
+    <Pressable
+      style={({ pressed }) => [styles.row, pressed && styles.rowPressed]}
+      onLongPress={() => {
+        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+        onEdit();
+      }}
+      delayLongPress={600}
+    >
       <View style={[styles.iconWrap, { backgroundColor: color + '20' }]}>
         <SymbolView name={icon} size={16} tintColor={color} />
       </View>
@@ -172,7 +187,7 @@ function EntryRow({ label, sublabel, amount, amountsVisible, color, icon, onDele
       <Pressable onPress={onDelete} hitSlop={12} style={styles.deleteBtn}>
         <SymbolView name="trash" size={15} tintColor="#ef4444" />
       </Pressable>
-    </View>
+    </Pressable>
   );
 }
 
@@ -197,6 +212,9 @@ function useStyles(colors: AppColors) {
       gap: 12,
       borderBottomWidth: StyleSheet.hairlineWidth,
       borderBottomColor: colors.border,
+    },
+    rowPressed: {
+      opacity: 0.6,
     },
     iconWrap: {
       width: 32,

@@ -103,6 +103,19 @@ export async function getIncomes(year: number, month: number): Promise<Income[]>
   );
 }
 
+export async function updateIncome(
+  id: number,
+  amount: number,
+  clientName: string,
+  description: string,
+): Promise<void> {
+  const database = await getDatabase();
+  await database.runAsync(
+    'UPDATE incomes SET amount = ?, client_name = ?, description = ? WHERE id = ?',
+    [amount, clientName, description, id],
+  );
+}
+
 export async function deleteIncome(id: number): Promise<void> {
   const database = await getDatabase();
   await database.runAsync('DELETE FROM incomes WHERE id = ?', [id]);
@@ -133,6 +146,19 @@ export async function getExpenses(year: number, month: number): Promise<Expense[
   );
 }
 
+export async function updateExpense(
+  id: number,
+  amount: number,
+  category: ExpenseCategoryId,
+  description: string,
+): Promise<void> {
+  const database = await getDatabase();
+  await database.runAsync(
+    'UPDATE expenses SET amount = ?, category = ?, description = ? WHERE id = ?',
+    [amount, category, description, id],
+  );
+}
+
 export async function deleteExpense(id: number): Promise<void> {
   const database = await getDatabase();
   await database.runAsync('DELETE FROM expenses WHERE id = ?', [id]);
@@ -160,6 +186,19 @@ export async function getProfitDistributions(year: number, month: number): Promi
   return database.getAllAsync<ProfitDistribution>(
     'SELECT * FROM profit_distributions WHERE year = ? AND month = ? ORDER BY created_at DESC',
     [year, month],
+  );
+}
+
+export async function updateProfitDistribution(
+  id: number,
+  amount: number,
+  shareholderName: string,
+  description: string,
+): Promise<void> {
+  const database = await getDatabase();
+  await database.runAsync(
+    'UPDATE profit_distributions SET amount = ?, shareholder_name = ?, description = ? WHERE id = ?',
+    [amount, shareholderName, description, id],
   );
 }
 

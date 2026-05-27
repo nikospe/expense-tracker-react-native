@@ -9,6 +9,7 @@ import { SummaryCard } from '@/components/SummaryCard';
 import { MonthNavigator } from '@/components/MonthNavigator';
 import { ExpenseBreakdown } from '@/components/ExpenseBreakdown';
 import { IncomeList, ExpenseList, ProfitDistributionList } from '@/components/EntryList';
+import { EditEntryModal, type EditTarget } from '@/components/EditEntryModal';
 import { useMonthData } from '@/hooks/use-month-data';
 import { getStandardIncomes, getStandardExpenses, forceApplyStandardsToMonth } from '@/lib/database';
 import { formatEuro } from '@/lib/calculations';
@@ -39,6 +40,7 @@ export default function DashboardScreen() {
 
   // null = not checked, true/false = result
   const [hasEnabledStandards, setHasEnabledStandards] = useState<boolean | null>(null);
+  const [editTarget, setEditTarget] = useState<EditTarget | null>(null);
 
   const isCurrentMonth = year === now.getFullYear() && month === now.getMonth() + 1;
 
@@ -166,6 +168,12 @@ export default function DashboardScreen() {
 
   return (
     <GestureDetector gesture={swipeGesture}>
+      <>
+      <EditEntryModal
+        target={editTarget}
+        onClose={() => setEditTarget(null)}
+        onSaved={() => { setEditTarget(null); refresh(); }}
+      />
       <ScrollView style={styles.scroll} contentContainerStyle={styles.container}>
         <MonthNavigator
           year={year} month={month}
@@ -216,21 +224,34 @@ export default function DashboardScreen() {
 
             <View style={styles.card}>
               <Text style={styles.sectionTitle}>{t('dashboard.incomeEntries')}</Text>
-              <IncomeList incomes={incomes} onDelete={refresh} />
+              <IncomeList
+                incomes={incomes}
+                onDelete={refresh}
+                onEdit={(entry) => setEditTarget({ type: 'income', entry })}
+              />
             </View>
 
             <View style={styles.card}>
               <Text style={styles.sectionTitle}>{t('dashboard.expenseEntries')}</Text>
-              <ExpenseList expenses={expenses} onDelete={refresh} />
+              <ExpenseList
+                expenses={expenses}
+                onDelete={refresh}
+                onEdit={(entry) => setEditTarget({ type: 'expense', entry })}
+              />
             </View>
 
             <View style={styles.card}>
               <Text style={styles.sectionTitle}>{t('dashboard.profitDistributions')}</Text>
-              <ProfitDistributionList distributions={profitDistributions} onDelete={refresh} />
+              <ProfitDistributionList
+                distributions={profitDistributions}
+                onDelete={refresh}
+                onEdit={(entry) => setEditTarget({ type: 'profit_distribution', entry })}
+              />
             </View>
           </>
         )}
       </ScrollView>
+      </>
     </GestureDetector>
   );
 }
