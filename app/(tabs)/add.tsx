@@ -8,6 +8,7 @@ import { useTranslation } from 'react-i18next';
 import { EXPENSE_CATEGORIES, type ExpenseCategoryId } from '@/lib/types';
 import { addIncome, addExpense, addProfitDistribution } from '@/lib/database';
 import { useAppColors } from '@/contexts/AppSettingsContext';
+import { RecentAdditions } from '@/components/RecentAdditions';
 import type { AppColors } from '@/lib/theme-colors';
 
 type EntryType = 'income' | 'expense' | 'profit_distribution';
@@ -25,6 +26,7 @@ export default function AddEntryScreen() {
   const [year, setYear] = useState(now.getFullYear());
   const [month, setMonth] = useState(now.getMonth() + 1);
   const [saving, setSaving] = useState(false);
+  const [refreshKey, setRefreshKey] = useState(0);
 
   const handleSave = async () => {
     const parsed = parseFloat(amount.replace(',', '.'));
@@ -43,6 +45,7 @@ export default function AddEntryScreen() {
       }
       setAmount('');
       setDescription('');
+      setRefreshKey((k) => k + 1);
       const typeLabel = entryType === 'income'
         ? t('common.income')
         : entryType === 'profit_distribution'
@@ -231,6 +234,22 @@ export default function AddEntryScreen() {
               : t('add.addExpense')}
           </Text>
         </Pressable>
+
+        {/* Recent Additions */}
+        <RecentAdditions
+          entryType={entryType}
+          accentColor={
+            entryType === 'income'
+              ? '#22c55e'
+              : entryType === 'profit_distribution'
+              ? '#a855f7'
+              : '#ef4444'
+          }
+          refreshKey={refreshKey}
+          year={year}
+          month={month}
+          onSaved={() => setRefreshKey((k) => k + 1)}
+        />
 
       </ScrollView>
     </KeyboardAvoidingView>

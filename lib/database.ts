@@ -350,6 +350,54 @@ export async function applyStandardsToMonth(year: number, month: number): Promis
   );
 }
 
+// ─── Recent Unique Amounts ───────────────────────────────────────────────────
+
+export async function getRecentIncomeAmounts(limit = 5): Promise<number[]> {
+  const database = await getDatabase();
+  const rows = await database.getAllAsync<{ amount: number }>(
+    `WITH ranked AS (
+       SELECT amount, MAX(created_at) AS last_added
+       FROM incomes
+       GROUP BY amount
+     )
+     SELECT amount FROM ranked ORDER BY last_added DESC LIMIT ?`,
+    [limit],
+  );
+  return rows.map((r) => r.amount);
+}
+
+export interface RecentExpenseEntry {
+  amount: number;
+  category: ExpenseCategoryId;
+}
+
+export async function getRecentExpenseEntries(limit = 5): Promise<RecentExpenseEntry[]> {
+  const database = await getDatabase();
+  return database.getAllAsync<RecentExpenseEntry>(
+    `WITH ranked AS (
+       SELECT amount, category, MAX(created_at) AS last_added
+       FROM expenses
+       GROUP BY amount, category
+     )
+     SELECT amount, category FROM ranked ORDER BY last_added DESC LIMIT ?`,
+    [limit],
+  );
+}
+
+export async function getRecentDistributionAmounts(limit = 5): Promise<number[]> {
+  const database = await getDatabase();
+  const rows = await database.getAllAsync<{ amount: number }>(
+    `WITH ranked AS (
+       SELECT amount, MAX(created_at) AS last_added
+       FROM profit_distributions
+       GROUP BY amount
+     )
+     SELECT amount FROM ranked ORDER BY last_added DESC LIMIT ?`,
+    [limit],
+  );
+  return rows.map((r) => r.amount);
+}
+
 export async function deleteAllData(): Promise<void> {
   const database = await getDatabase();
   await database.execAsync(`

@@ -92,6 +92,7 @@ const en = {
     otherNameLabel:       'Expense Name',
     otherNamePlaceholder: 'e.g. Office supplies',
     otherNameHint:        'This will appear as the label in your expense list.',
+    recentAdditions:      'Recent Additions',
   },
   history: {
     title:              'Monthly Overview',
@@ -261,6 +262,7 @@ const el: typeof en = {
     otherNameLabel:       'Όνομα Εξόδου',
     otherNamePlaceholder: 'π.χ. Γραφική ύλη',
     otherNameHint:        'Θα εμφανιστεί ως ετικέτα στη λίστα εξόδων.',
+    recentAdditions:      'Πρόσφατες Προσθήκες',
   },
   history: {
     title:              'Μηνιαία Επισκόπηση',
