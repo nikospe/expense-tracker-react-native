@@ -33,6 +33,11 @@ const en = {
     plaisio:     'Plaisio',
     kotsovolos:  'Kotsovolos',
     public:      'Public',
+    openai:      'OpenAI',
+    claude_code: 'Claude Code',
+    claude_api:  'Claude API',
+    openai_api:  'OpenAI API',
+    apple_dev:   'Apple Developer',
     other:       'Other',
   },
   common: {
@@ -203,6 +208,11 @@ const el: typeof en = {
     plaisio:     'Πλαίσιο',
     kotsovolos:  'Κωτσόβολος',
     public:      'Public',
+    openai:      'OpenAI',
+    claude_code: 'Claude Code',
+    claude_api:  'Claude API',
+    openai_api:  'OpenAI API',
+    apple_dev:   'Apple Developer',
     other:       'Λοιπά',
   },
   common: {

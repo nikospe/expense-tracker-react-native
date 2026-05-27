@@ -13,6 +13,11 @@ export type ExpenseCategoryId =
   | 'plaisio'
   | 'kotsovolos'
   | 'public'
+  | 'openai'
+  | 'claude_code'
+  | 'claude_api'
+  | 'openai_api'
+  | 'apple_dev'
   | 'other';
 
 export interface ExpenseCategory {
@@ -35,6 +40,11 @@ export const EXPENSE_CATEGORIES: ExpenseCategory[] = [
   { id: 'plaisio',     label: 'Plaisio',            icon: 'laptopcomputer',         color: '#6366f1' },
   { id: 'kotsovolos',  label: 'Kotsovolos',         icon: 'tv.fill',                color: '#ef4444' },
   { id: 'public',      label: 'Public',             icon: 'book.fill',              color: '#10b981' },
+  { id: 'openai',      label: 'OpenAI',             icon: 'sparkles',               color: '#10a37f' },
+  { id: 'claude_code', label: 'Claude Code',        icon: 'terminal.fill',          color: '#cc785c' },
+  { id: 'claude_api',  label: 'Claude API',         icon: 'antenna.radiowaves.left.and.right', color: '#bf6650' },
+  { id: 'openai_api',  label: 'OpenAI API',         icon: 'cpu',                    color: '#0d9f7e' },
+  { id: 'apple_dev',   label: 'Apple Developer',    icon: 'swift',                  color: '#5856d6' },
   { id: 'other',       label: 'Other',              icon: 'ellipsis.circle.fill',   color: '#94a3b8' },
 ];
 
