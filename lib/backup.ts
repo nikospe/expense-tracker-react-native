@@ -23,7 +23,7 @@ interface SettingsSnapshot {
 
 interface BackupData {
   version: 1;
-  app: 'kerdos';
+  app: 'kerdos' | 'profitflow';
   exportedAt: string;
   settings: SettingsSnapshot;
   incomes: IncomeRow[];
@@ -51,7 +51,7 @@ export async function exportBackup(): Promise<void> {
 
   const data: BackupData = {
     version: 1,
-    app: 'kerdos',
+    app: 'profitflow',
     exportedAt: new Date().toISOString(),
     settings: {
       theme: settingsStore.getTheme(),
@@ -69,7 +69,7 @@ export async function exportBackup(): Promise<void> {
   };
 
   const dateStr = new Date().toISOString().slice(0, 10);
-  const fileName = `kerdos-backup-${dateStr}.json`;
+  const fileName = `profitflow-backup-${dateStr}.json`;
   const fileUri = `${FileSystem.documentDirectory}${fileName}`;
 
   await FileSystem.writeAsStringAsync(fileUri, JSON.stringify(data, null, 2), {
@@ -79,7 +79,7 @@ export async function exportBackup(): Promise<void> {
   if (await Sharing.isAvailableAsync()) {
     await Sharing.shareAsync(fileUri, {
       mimeType: 'application/json',
-      dialogTitle: 'Save Kerdos Backup',
+      dialogTitle: 'Save profitFlow Backup',
       UTI: 'public.json',
     });
   }
@@ -105,7 +105,7 @@ export async function importBackup(): Promise<'cancelled' | { settings: Restored
     throw new Error('invalid_json');
   }
 
-  if (data.app !== 'kerdos' || data.version !== 1) {
+  if (!['kerdos', 'profitflow'].includes(data.app) || data.version !== 1) {
     throw new Error('invalid_backup');
   }
 
