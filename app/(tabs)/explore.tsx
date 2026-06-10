@@ -205,7 +205,7 @@ function useStyles(colors: AppColors) {
     emptyState: { alignItems: 'center', gap: 12, marginTop: 60 },
     emptyText: { color: colors.textMuted, fontSize: 15, textAlign: 'center' },
     card: {
-      backgroundColor: colors.card, borderRadius: 16, padding: 16,
+      backgroundColor: colors.surface, borderRadius: 16, padding: 16,
       shadowColor: '#000', shadowOffset: { width: 0, height: 2 },
       shadowOpacity: 0.06, shadowRadius: 8, elevation: 3,
     },
@@ -233,7 +233,7 @@ function useStyles(colors: AppColors) {
     noMonthData: { color: colors.textMuted, fontSize: 14, textAlign: 'center', paddingVertical: 16 },
     recalcBtn: {
       flexDirection: 'row', alignItems: 'center', gap: 12,
-      backgroundColor: colors.card, borderRadius: 12, padding: 14,
+      backgroundColor: colors.surface, borderRadius: 12, padding: 14,
       borderWidth: 1, borderColor: colors.border,
     },
     recalcLabel: { fontSize: 14, fontWeight: '600', color: colors.text },

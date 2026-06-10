@@ -6,6 +6,32 @@ import { LightColors, DarkColors, type AppColors } from '@/lib/theme-colors';
 import { type PrepaymentRate } from '@/lib/types';
 import i18n, { getDeviceLanguage } from '@/lib/i18n';
 
+const lightNavTheme: Theme = {
+  dark: false,
+  colors: {
+    primary:      LightColors.primary,
+    background:   LightColors.background,
+    card:         LightColors.surface,
+    text:         LightColors.text,
+    border:       LightColors.border,
+    notification: LightColors.danger,
+  },
+  fonts: DefaultTheme.fonts,
+};
+
+const darkNavTheme: Theme = {
+  dark: true,
+  colors: {
+    primary:      DarkColors.primary,
+    background:   DarkColors.background,
+    card:         DarkColors.surface,
+    text:         DarkColors.text,
+    border:       DarkColors.border,
+    notification: DarkColors.danger,
+  },
+  fonts: DarkTheme.fonts,
+};
+
 interface AppSettingsContextValue {
   // Theme
   themePreference: ThemePreference;
@@ -62,7 +88,7 @@ export function AppSettingsProvider({ children }: { children: React.ReactNode })
   }, [themePreference, deviceScheme]);
 
   const colors = isDark ? DarkColors : LightColors;
-  const navTheme = isDark ? DarkTheme : DefaultTheme;
+  const navTheme = isDark ? darkNavTheme : lightNavTheme;
 
   const setThemePreference = useCallback((v: ThemePreference) => {
     settingsStore.setTheme(v);

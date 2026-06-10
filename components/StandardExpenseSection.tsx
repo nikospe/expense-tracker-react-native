@@ -142,7 +142,7 @@ export function StandardExpenseSection({ colors }: { colors: AppColors }) {
 
           {category === 'other' && (
             <TextInput
-              style={[styles.input, { borderBottomColor: colors.inputBorder, color: colors.text }]}
+              style={[styles.input, { borderBottomColor: colors.borderStrong, color: colors.text }]}
               value={description}
               onChangeText={setDescription}
               placeholder={t('add.otherNamePlaceholder')}
@@ -151,7 +151,7 @@ export function StandardExpenseSection({ colors }: { colors: AppColors }) {
             />
           )}
 
-          <View style={[styles.amountRow, { borderBottomColor: colors.inputBorder }]}>
+          <View style={[styles.amountRow, { borderBottomColor: colors.borderStrong }]}>
             <Text style={styles.eurSymbol}>€</Text>
             <TextInput
               style={[styles.amountInput, { color: colors.text }]}
@@ -190,7 +190,7 @@ function useStyles(colors: AppColors) {
       marginBottom: 8, marginTop: 4, marginLeft: 4,
     },
     card: {
-      backgroundColor: colors.card, borderRadius: 16, padding: 16, marginBottom: 20,
+      backgroundColor: colors.surface, borderRadius: 16, padding: 16, marginBottom: 20,
       shadowColor: '#000', shadowOffset: { width: 0, height: 2 },
       shadowOpacity: 0.06, shadowRadius: 8, elevation: 3,
     },
@@ -208,7 +208,7 @@ function useStyles(colors: AppColors) {
     chip: {
       flexDirection: 'row', alignItems: 'center', gap: 4,
       paddingHorizontal: 9, paddingVertical: 6,
-      borderRadius: 8, borderWidth: 1.5, backgroundColor: colors.card,
+      borderRadius: 8, borderWidth: 1.5, backgroundColor: colors.surface,
     },
     chipLabel: { fontSize: 11 },
     input: { fontSize: 15, borderBottomWidth: 1.5, paddingBottom: 6 },

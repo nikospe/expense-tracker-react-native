@@ -96,14 +96,14 @@ export function StandardIncomeSection({ colors }: { colors: AppColors }) {
 
         <View style={styles.addForm}>
           <TextInput
-            style={[styles.input, { borderBottomColor: colors.inputBorder, color: colors.text }]}
+            style={[styles.input, { borderBottomColor: colors.borderStrong, color: colors.text }]}
             value={description}
             onChangeText={setDescription}
             placeholder={t('settings.standardDescPlaceholder')}
             placeholderTextColor={colors.textMuted}
             returnKeyType="next"
           />
-          <View style={[styles.amountRow, { borderBottomColor: colors.inputBorder }]}>
+          <View style={[styles.amountRow, { borderBottomColor: colors.borderStrong }]}>
             <Text style={styles.eurSymbol}>€</Text>
             <TextInput
               style={[styles.amountInput, { color: colors.text }]}
@@ -137,7 +137,7 @@ function useStyles(colors: AppColors) {
       marginBottom: 8, marginTop: 4, marginLeft: 4,
     },
     card: {
-      backgroundColor: colors.card, borderRadius: 16, padding: 16, marginBottom: 20,
+      backgroundColor: colors.surface, borderRadius: 16, padding: 16, marginBottom: 20,
       shadowColor: '#000', shadowOffset: { width: 0, height: 2 },
       shadowOpacity: 0.06, shadowRadius: 8, elevation: 3,
     },

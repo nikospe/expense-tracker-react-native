@@ -125,7 +125,7 @@ export default function AddEntryScreen() {
         {/* Amount */}
         <View style={styles.card}>
           <Text style={styles.fieldLabel}>{t('add.amount')}</Text>
-          <View style={[styles.amountRow, { borderBottomColor: colors.inputBorder }]}>
+          <View style={[styles.amountRow, { borderBottomColor: colors.borderStrong }]}>
             <Text style={styles.eurSymbol}>€</Text>
             <TextInput
               style={styles.amountInput}
@@ -144,7 +144,7 @@ export default function AddEntryScreen() {
           <View style={styles.card}>
             <Text style={styles.fieldLabel}>{t('add.clientNameLabel')}</Text>
             <TextInput
-              style={[styles.descInput, { borderBottomColor: colors.inputBorder, color: colors.text }]}
+              style={[styles.descInput, { borderBottomColor: colors.borderStrong, color: colors.text }]}
               value={clientName}
               onChangeText={setClientName}
               placeholder={t('add.clientNamePlaceholder')}
@@ -159,7 +159,7 @@ export default function AddEntryScreen() {
           <View style={styles.card}>
             <Text style={styles.fieldLabel}>{t('add.shareholderLabel')}</Text>
             <TextInput
-              style={[styles.descInput, { borderBottomColor: colors.inputBorder, color: colors.text }]}
+              style={[styles.descInput, { borderBottomColor: colors.borderStrong, color: colors.text }]}
               value={shareholderName}
               onChangeText={setShareholderName}
               placeholder={t('add.shareholderPlaceholder')}
@@ -209,7 +209,7 @@ export default function AddEntryScreen() {
           <View style={styles.card}>
             <Text style={styles.fieldLabel}>{t('add.otherNameLabel')}</Text>
             <TextInput
-              style={[styles.descInput, { borderBottomColor: colors.inputBorder, color: colors.text }]}
+              style={[styles.descInput, { borderBottomColor: colors.borderStrong, color: colors.text }]}
               value={description}
               onChangeText={setDescription}
               placeholder={t('add.otherNamePlaceholder')}
@@ -226,7 +226,7 @@ export default function AddEntryScreen() {
           <View style={styles.card}>
             <Text style={styles.fieldLabel}>{t('add.description')}</Text>
             <TextInput
-              style={[styles.descInput, { borderBottomColor: colors.inputBorder, color: colors.text }]}
+              style={[styles.descInput, { borderBottomColor: colors.borderStrong, color: colors.text }]}
               value={description}
               onChangeText={setDescription}
               placeholder={
@@ -337,13 +337,13 @@ function useStyles(colors: AppColors) {
     container: { padding: 16, paddingBottom: 40, gap: 12 },
     toggle: {
       flexDirection: 'row',
-      backgroundColor: colors.toggleBg,
+      backgroundColor: colors.surfaceAlt,
       borderRadius: 12,
       padding: 4,
       gap: 4,
     },
     card: {
-      backgroundColor: colors.card,
+      backgroundColor: colors.surface,
       borderRadius: 16,
       padding: 16,
       shadowColor: '#000',
@@ -370,7 +370,7 @@ function useStyles(colors: AppColors) {
       flexDirection: 'row', alignItems: 'center', gap: 6,
       paddingHorizontal: 12, paddingVertical: 8,
       borderRadius: 10, borderWidth: 1.5,
-      backgroundColor: colors.card,
+      backgroundColor: colors.surface,
     },
     chipLabel: { fontSize: 13 },
     descInput: { fontSize: 15, borderBottomWidth: 1.5, paddingBottom: 6 },

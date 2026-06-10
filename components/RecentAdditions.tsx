@@ -149,7 +149,7 @@ export function RecentAdditions({ entryType, accentColor, refreshKey, year, mont
 function useStyles(colors: AppColors) {
   return useMemo(() => StyleSheet.create({
     card: {
-      backgroundColor: colors.card,
+      backgroundColor: colors.surface,
       borderRadius: 16,
       padding: 16,
       shadowColor: '#000',

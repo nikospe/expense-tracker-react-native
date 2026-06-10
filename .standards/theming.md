@@ -9,16 +9,29 @@ type: reference
 ## AppColors Interface (`lib/theme-colors.ts`)
 ```typescript
 interface AppColors {
-  background:    string;  // Screen/page background
-  card:          string;  // Card/surface background
+  // Backgrounds
+  background:    string;  // Screen / page background
+  surface:       string;  // Card / panel background
+  surfaceAlt:    string;  // Chips, segment controls, secondary surfaces
+
+  // Text
   text:          string;  // Primary text
-  textSecondary: string;  // Labels, secondary text
-  textMuted:     string;  // Placeholder, hint text
+  textSecondary: string;  // Labels, captions
+  textMuted:     string;  // Placeholders, hints
+
+  // Borders
   border:        string;  // Subtle dividers
-  borderStrong:  string;  // Visible borders, chip borders
-  inputBorder:   string;  // Text input underline
-  toggleBg:      string;  // Segmented control background
-  accent:        string;  // App accent (green)
+  borderStrong:  string;  // Visible borders, input underlines
+
+  // Brand
+  primary:       string;  // Brand accent
+  primaryDark:   string;  // Pressed / darker accent
+  secondary:     string;  // Secondary accent
+
+  // Semantic states
+  success:       string;
+  danger:        string;
+  warning:       string;
 }
 ```
 
@@ -26,21 +39,24 @@ interface AppColors {
 
 | Token | Light | Dark |
 |---|---|---|
-| `background` | `#f9fafb` | `#0f172a` |
-| `card` | `#ffffff` | `#1e293b` |
-| `text` | `#111827` | `#f1f5f9` |
-| `textSecondary` | `#6b7280` | `#94a3b8` |
-| `textMuted` | `#9ca3af` | `#64748b` |
-| `border` | `#f3f4f6` | `#1e293b` |
-| `borderStrong` | `#e5e7eb` | `#334155` |
-| `inputBorder` | `#e5e7eb` | `#334155` |
-| `toggleBg` | `#f3f4f6` | `#1e293b` |
-| `accent` | `#22c55e` | `#22c55e` |
+| `background` | `#FAF5EC` | `#0F1013` |
+| `surface` | `#FFFDF8` | `#1B1D21` |
+| `surfaceAlt` | `#EFE3D0` | `#292C31` |
+| `text` | `#15171A` | `#F0E3CE` |
+| `textSecondary` | `#6B5D4A` | `#A89880` |
+| `textMuted` | `#9E8B74` | `#6B5E50` |
+| `border` | `#E8DCCD` | `#232529` |
+| `borderStrong` | `#D4C5B0` | `#333740` |
+| `primary` | `#D89A32` | `#EAB05A` |
+| `primaryDark` | `#A96A1F` | `#B97824` |
+| `secondary` | `#5F8375` | `#5E796D` |
+| `success` | `#16a34a` | `#4ade80` |
+| `danger` | `#dc2626` | `#f87171` |
+| `warning` | `#d97706` | `#fbbf24` |
 
 ## Accessing Colors in a Component
 
 ```typescript
-// Inside a component:
 import { useAppColors } from '@/contexts/AppSettingsContext';
 const colors = useAppColors();
 
@@ -56,7 +72,7 @@ All components define styles inside a `useMemo`-wrapped `StyleSheet.create` call
 function useStyles(colors: AppColors) {
   return useMemo(() => StyleSheet.create({
     card: {
-      backgroundColor: colors.card,
+      backgroundColor: colors.surface,
       borderRadius: 16,
       padding: 16,
       shadowColor: '#000',
@@ -73,7 +89,6 @@ function useStyles(colors: AppColors) {
       letterSpacing: 0.5,
       marginBottom: 10,
     },
-    // ...
   }), [colors]);
 }
 ```
@@ -81,13 +96,28 @@ function useStyles(colors: AppColors) {
 Call it at the top of the component: `const styles = useStyles(colors);`
 
 ## Entry Type Accent Colors
-These are not in `AppColors` — they are hardcoded per entry type:
+These are **not** in `AppColors` — hardcoded per entry type:
 
 | Type | Color | Usage |
 |---|---|---|
 | Income | `#22c55e` | Green |
 | Expense | `#ef4444` | Red |
 | Profit Distribution | `#a855f7` | Purple |
+
+## ThemedView / ThemedText
+
+```tsx
+// ThemedView — variant controls background token
+<ThemedView variant="surface"> ... </ThemedView>
+// variants: 'background' (default) | 'surface' | 'surfaceAlt'
+
+// ThemedText — type controls typography, colorVariant controls color token
+<ThemedText type="defaultSemiBold" colorVariant="textSecondary">
+  Label
+</ThemedText>
+// colorVariants: 'text' (default) | 'textSecondary' | 'textMuted' | 'primary'
+// type 'link' always uses colors.primary automatically
+```
 
 ## Card Shadow (Standard)
 ```typescript

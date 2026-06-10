@@ -36,7 +36,7 @@ export function MonthNavigator({ year, month, onPrev, onNext }: Props) {
           <SymbolView
             name={amountsVisible ? 'eye' : 'eye.slash'}
             size={22}
-            tintColor={amountsVisible ? colors.textSecondary : colors.accent}
+            tintColor={amountsVisible ? colors.textSecondary : colors.primary}
           />
         </Pressable>
       </View>

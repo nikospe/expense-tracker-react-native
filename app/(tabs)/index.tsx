@@ -281,7 +281,7 @@ function EmptyMonthCard({
         <>
           <Text style={styles.emptyMonthHint}>{t('dashboard.noDefaultsHint')}</Text>
           <Pressable style={styles.settingsBtn} onPress={onGoToSettings}>
-            <SymbolView name="gearshape.fill" size={14} tintColor={colors.accent} />
+            <SymbolView name="gearshape.fill" size={14} tintColor={colors.primary} />
             <Text style={styles.settingsBtnText}>{t('dashboard.goToSettings')}</Text>
           </Pressable>
         </>
@@ -298,7 +298,7 @@ function useStyles(colors: AppColors) {
     grid: { gap: 10, marginBottom: 16 },
     gridRow: { flexDirection: 'row', gap: 10 },
     card: {
-      backgroundColor: colors.card,
+      backgroundColor: colors.surface,
       borderRadius: 16,
       padding: 16,
       marginBottom: 12,
@@ -354,13 +354,13 @@ function useStyles(colors: AppColors) {
       paddingVertical: 10,
       borderRadius: 10,
       borderWidth: 1.5,
-      borderColor: colors.accent,
+      borderColor: colors.primary,
       marginTop: 4,
     },
     settingsBtnText: {
       fontSize: 14,
       fontWeight: '600',
-      color: colors.accent,
+      color: colors.primary,
     },
   }), [colors]);
 }

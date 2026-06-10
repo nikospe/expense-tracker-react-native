@@ -110,7 +110,7 @@ export function EditEntryModal({ target, onClose, onSaved }: Props) {
               <View style={styles.field}>
                 <Text style={styles.fieldLabel}>{t('add.clientNameLabel')}</Text>
                 <TextInput
-                  style={[styles.input, { borderBottomColor: colors.inputBorder, color: colors.text }]}
+                  style={[styles.input, { borderBottomColor: colors.borderStrong, color: colors.text }]}
                   value={clientName}
                   onChangeText={setClientName}
                   placeholder={t('add.clientNamePlaceholder')}
@@ -125,7 +125,7 @@ export function EditEntryModal({ target, onClose, onSaved }: Props) {
               <View style={styles.field}>
                 <Text style={styles.fieldLabel}>{t('add.shareholderLabel')}</Text>
                 <TextInput
-                  style={[styles.input, { borderBottomColor: colors.inputBorder, color: colors.text }]}
+                  style={[styles.input, { borderBottomColor: colors.borderStrong, color: colors.text }]}
                   value={shareholderName}
                   onChangeText={setShareholderName}
                   placeholder={t('add.shareholderPlaceholder')}
@@ -189,7 +189,7 @@ export function EditEntryModal({ target, onClose, onSaved }: Props) {
             <View style={styles.field}>
               <Text style={styles.fieldLabel}>{t('add.description')}</Text>
               <TextInput
-                style={[styles.input, { borderBottomColor: colors.inputBorder, color: colors.text }]}
+                style={[styles.input, { borderBottomColor: colors.borderStrong, color: colors.text }]}
                 value={description}
                 onChangeText={setDescription}
                 placeholder={
@@ -235,7 +235,7 @@ function useStyles(colors: AppColors) {
       justifyContent: 'flex-end',
     },
     sheet: {
-      backgroundColor: colors.card,
+      backgroundColor: colors.surface,
       borderTopLeftRadius: 24,
       borderTopRightRadius: 24,
       maxHeight: '90%',
@@ -315,7 +315,7 @@ function useStyles(colors: AppColors) {
       paddingVertical: 7,
       borderRadius: 10,
       borderWidth: 1.5,
-      backgroundColor: colors.card,
+      backgroundColor: colors.surface,
     },
     chipLabel: {
       fontSize: 12,

@@ -38,7 +38,7 @@ function useStyles(colors: AppColors) {
   return useMemo(() => StyleSheet.create({
     card: {
       flex: 1,
-      backgroundColor: colors.card,
+      backgroundColor: colors.surface,
       borderRadius: 16,
       borderLeftWidth: 3.5,
       padding: 14,

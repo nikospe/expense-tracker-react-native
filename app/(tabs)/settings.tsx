@@ -138,13 +138,13 @@ export default function SettingsScreen() {
             <SymbolView
               name={opt.icon as any}
               size={18}
-              tintColor={themePreference === opt.value ? colors.accent : colors.textMuted}
+              tintColor={themePreference === opt.value ? colors.primary : colors.textMuted}
             />
-            <Text style={[styles.rowLabel, themePreference === opt.value && { color: colors.accent, fontWeight: '600' }]}>
+            <Text style={[styles.rowLabel, themePreference === opt.value && { color: colors.primary, fontWeight: '600' }]}>
               {opt.label}
             </Text>
             {themePreference === opt.value && (
-              <SymbolView name="checkmark" size={16} tintColor={colors.accent} />
+              <SymbolView name="checkmark" size={16} tintColor={colors.primary} />
             )}
           </Pressable>
         ))}
@@ -160,16 +160,16 @@ export default function SettingsScreen() {
             style={[styles.row, i < languageOptions.length - 1 && styles.rowBorder]}
             onPress={() => setLanguagePreference(opt.value)}
           >
-            <View style={[styles.badge, languagePreference === opt.value && { backgroundColor: colors.accent }]}>
+            <View style={[styles.badge, languagePreference === opt.value && { backgroundColor: colors.primary }]}>
               <Text style={[styles.badgeText, languagePreference === opt.value && { color: '#fff' }]}>
                 {opt.badge}
               </Text>
             </View>
-            <Text style={[styles.rowLabel, languagePreference === opt.value && { color: colors.accent, fontWeight: '600' }]}>
+            <Text style={[styles.rowLabel, languagePreference === opt.value && { color: colors.primary, fontWeight: '600' }]}>
               {opt.label}
             </Text>
             {languagePreference === opt.value && (
-              <SymbolView name="checkmark" size={16} tintColor={colors.accent} />
+              <SymbolView name="checkmark" size={16} tintColor={colors.primary} />
             )}
           </Pressable>
         ))}
@@ -187,7 +187,7 @@ export default function SettingsScreen() {
         <Text style={styles.optionTitle}>{t('settings.taxRateLabel')}</Text>
         <View style={styles.taxRateRow}>
           <TextInput
-            style={[styles.taxRateInput, { color: colors.text, borderBottomColor: colors.inputBorder }]}
+            style={[styles.taxRateInput, { color: colors.text, borderBottomColor: colors.borderStrong }]}
             value={taxRateInput}
             onChangeText={handleTaxRateChange}
             keyboardType="decimal-pad"
@@ -258,7 +258,7 @@ export default function SettingsScreen() {
         <Text style={styles.backupHint}>{t('settings.backupHint')}</Text>
 
         {backupBusy ? (
-          <ActivityIndicator style={styles.backupLoader} color={colors.accent} />
+          <ActivityIndicator style={styles.backupLoader} color={colors.primary} />
         ) : (
           <View style={styles.backupButtons}>
             <Pressable style={[styles.backupBtn, styles.backupBtnExport]} onPress={handleExport}>
@@ -297,7 +297,7 @@ function useStyles(colors: AppColors) {
       marginBottom: 8, marginTop: 4, marginLeft: 4,
     },
     card: {
-      backgroundColor: colors.card,
+      backgroundColor: colors.surface,
       borderRadius: 16,
       padding: 16,
       marginBottom: 20,
